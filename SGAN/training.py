@@ -99,7 +99,7 @@ def train(sgancfg,
             dummy_Z = np.zeros(Znp.shape)
             dummy_samples = np.zeros(samples.shape)
 
-            if (config.epochs * config.epoch_iters + it) % (config.k + 1) == 0:
+            if (epoch * config.epoch_iters + it) % (config.k + 1) == 0:
                 # Training the generator
                 # We need to freeze the discriminator
                 D.trainable = False
