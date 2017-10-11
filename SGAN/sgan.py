@@ -19,8 +19,8 @@ def sgan(config):
     gamma_init = RandomNormal(mean=1., stddev=0.02)
 
     # Inputs
-    Z = Input((config.nz, None, None), name="Z")
-    X = Input((config.nc, config.npx, config.npx), name="X")
+    Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
+    X = Input((config.nc,) + (config.npx,) * config.convdims), name="X")
 
     # Generator
     layer = Z
