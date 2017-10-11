@@ -82,5 +82,6 @@ def sgan(config):
     D = Model(inputs=X, outputs=D_out, name="D")
     G = Model(inputs=Z, outputs=G_out, name="G")
     DG = Model(inputs=Z, outputs=D(G(Z)), name="DG")
+    Adv = Model(inputs=[X, Z], outputs=[D(X), D(G(Z))], name="Adv")
 
-    return D, G, DG
+    return D, G, DG, Adv

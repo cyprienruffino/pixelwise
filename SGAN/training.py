@@ -52,11 +52,11 @@ def train(sgancfg,
         D = load_model(D_path)
         DG = load_model(DG_path)
     else:
-        D, G, DG = sgan(config)
+        D, G, DG, Adv = sgan(config)
 
     # Compiling the models (G don't need to be compiled)
     TimePrint("Compiling the network...\n")
-    D.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_d)
+    Adv.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_d)
     TimePrint("Discriminator done.")
     DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_g)
     TimePrint("Generator done.")
@@ -72,6 +72,7 @@ def train(sgancfg,
         plot_model(D, logs_dir + "/D.png")
         plot_model(G, logs_dir + "/G.png")
         plot_model(DG, logs_dir + "/DG.png")
+        plot_model(Adv, logs_dir + "/Adv.png")
 
     # Do the actual training
     z_sample = np.random.uniform(-1., 1., (1, config.nz) +
@@ -108,7 +109,9 @@ def train(sgancfg,
 
             else:
                 # Training the discriminator
-                D_losses.append(DG.train_on_batch(samples, dummy_samples))
+                D_losses.append(
+                    Adv.train_on_batch([Znp, samples],
+                                       [dummy_Z, dummy_samples]))
 
         G_loss = float(np.mean(G_losses))
         D_loss = float(np.mean(D_losses))
