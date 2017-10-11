@@ -99,8 +99,8 @@ def train(sgancfg,
                 # Training the discriminator
                 D_losses.append(DG.train_on_batch(samples, dummy_samples))
 
-            G_loss = np.mean(G_losses)
-            D_loss = np.mean(D_losses)
+            G_loss = np.mean(G_losses)[0]
+            D_loss = np.mean(D_losses)[0]
 
             # Logging
             print("Gcost=", G_loss, "  Dcost=", D_loss)
