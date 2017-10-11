@@ -2,6 +2,7 @@ __pycache__
 .mypy_cache
 .idea
 *.png
+*.hdf5
 checkpoints
 logs
 samples
