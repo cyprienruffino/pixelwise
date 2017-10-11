@@ -5,7 +5,7 @@ from config import Config
 if __name__ == "__main__":
     train(
         sgancfg="demo.sgancfg",
-        data_provider=get_texture_iter("ti_2D"),
+        data_provider=get_texture_iter("ti_2D/"),
         run_name="Demo",
         checkpoints_dir="demo/checkpoints",
         logs_dir="demo/logs",
