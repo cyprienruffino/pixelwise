@@ -20,7 +20,7 @@ def sgan(config):
 
     # Inputs
     Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
-    X = Input((config.nc,) + (config.npx,) * config.convdims), name="X")
+    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
 
     # Generator
     layer = Z
