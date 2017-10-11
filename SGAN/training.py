@@ -110,8 +110,8 @@ def train(sgancfg,
             else:
                 # Training the discriminator
                 D_losses.append(
-                    Adv.train_on_batch([Znp, samples],
-                                       [dummy_Z, dummy_samples]))
+                    Adv.train_on_batch([samples, Znp],
+                                       [dummy_samples, dummy_Z]))
 
         G_loss = float(np.mean(G_losses))
         D_loss = float(np.mean(D_losses))
