@@ -25,7 +25,8 @@ def train(sgancfg,
         run_name = str(time.time())
 
     # Loading the config file
-    config = pickle.load(sgancfg)
+    with open(sgancfg, "rb") as f:
+        config = pickle.load(f)
 
     # Seeding the random numbers generators
     np.random.seed(config.seed)
