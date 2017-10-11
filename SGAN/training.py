@@ -84,7 +84,7 @@ def train(sgancfg,
         else:
             bar = lambda x: x
 
-        for it in bar(range(config.epoch_iters)):
+        for it in bar(range(int(config.epoch_iters / config.batch_size))):
             samples = next(data_provider)
 
             G_losses = []
