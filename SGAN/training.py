@@ -103,34 +103,32 @@ def train(sgancfg,
                 # Training the discriminator
                 D_losses.append(DG.train_on_batch(samples, dummy_samples))
 
-            G_loss = float(np.mean(G_losses))
-            D_loss = float(np.mean(D_losses))
+        G_loss = float(np.mean(G_losses))
+        D_loss = float(np.mean(D_losses))
 
-            # Logging
-            print("Gcost=", G_loss, "  Dcost=", D_loss)
-            if use_tensorboard:
-                summary = tf.Summary(value=[
-                    tf.Summary.Value(tag="D_cost", simple_value=D_loss),
-                    tf.Summary.Value(tag="G_cost", simple_value=G_loss)
-                ])
-                writer.add_summary(summary)
-                writer.flush()
+        # Logging
+        print("Gcost=", G_loss, "  Dcost=", D_loss)
+        if use_tensorboard:
+            summary = tf.Summary(value=[
+                tf.Summary.Value(tag="D_cost", simple_value=D_loss),
+                tf.Summary.Value(tag="G_cost", simple_value=G_loss)
+            ])
+            writer.add_summary(summary)
+            writer.flush()
 
-            # Generating a sample image and saving it
-            data = G.predict(z_sample)
-            f = h5py.File(
-                samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
-            f.create_dataset('features', data=data)
-            f.flush()
-            f.close()
+        # Generating a sample image and saving it
+        data = G.predict(z_sample)
+        f = h5py.File(
+            samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
+        f.create_dataset('features', data=data)
+        f.flush()
+        f.close()
 
-            # Saving
-            G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) +
-                   ".hdf5")
-            D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) +
-                   ".hdf5")
-            DG.save(checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) +
-                    ".hdf5")
+        # Saving
+        G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
+        D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
+        DG.save(checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) +
+                ".hdf5")
 
     # Closing the logger
     if use_tensorboard:
