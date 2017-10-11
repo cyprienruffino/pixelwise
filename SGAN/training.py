@@ -9,7 +9,7 @@ from tools import TimePrint
 
 
 def train(sgancfg,
-          training_image,
+          data_provider,
           run_name=None,
           checkpoints_dir="./",
           logs_dir="./",
@@ -74,7 +74,7 @@ def train(sgancfg,
         print("Epoch", epoch)
 
         for it in range(config.epoch_iters):
-            samples = next(data)
+            samples = next(data_provider)
 
             G_losses = []
             D_losses = []
