@@ -85,11 +85,11 @@ def train(sgancfg,
         else:
             bar = lambda x: x
 
+        G_losses = []
+        D_losses = []
+
         for it in bar(range(int(config.epoch_iters / config.batch_size))):
             samples = next(data_provider)
-
-            G_losses = []
-            D_losses = []
 
             # Creating the input noise
             Znp = np.random.uniform(-1., 1., (config.batch_size, config.nz) +
