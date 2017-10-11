@@ -1,7 +1,8 @@
 import pickle
 import time
-
 import h5py
+import progressbar
+
 import numpy as np
 from tensorflow import set_random_seed
 
@@ -14,6 +15,7 @@ def train(sgancfg,
           checkpoints_dir="./",
           logs_dir="./",
           samples_dir="./",
+          progress_bar=True,
           use_tensorboard=True,
           plot_models=True,
           D_path=None,
@@ -77,8 +79,12 @@ def train(sgancfg,
 
     for epoch in range(config.epochs):
         print("Epoch", epoch)
+        if progress_bar:
+            bar = progressbar.ProgressBar()
+        else:
+            bar = lambda x: x
 
-        for it in range(config.epoch_iters):
+        for it in bar(range(config.epoch_iters)):
             samples = next(data_provider)
 
             G_losses = []
