@@ -1,0 +1,7 @@
+__pycache__
+.mypy_cache
+.idea
+*.png
+checkpoints
+logs
+samples
