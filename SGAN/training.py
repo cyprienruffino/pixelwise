@@ -5,7 +5,7 @@ import h5py
 import numpy as np
 from tensorflow import set_random_seed
 
-from tools import TimePrint
+from tools import TimePrint, create_dir
 
 
 def train(sgancfg,
@@ -23,6 +23,10 @@ def train(sgancfg,
 
     if run_name is None:
         run_name = str(time.time())
+
+    create_dir(logs_dir)
+    create_dir(checkpoints_dir)
+    create_dir(samples_dir)
 
     # Loading the config file
     with open(sgancfg, "rb") as f:
