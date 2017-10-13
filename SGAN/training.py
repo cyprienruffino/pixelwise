@@ -125,7 +125,7 @@ def train(sgancfg,
                 tf.Summary.Value(tag="D_cost", simple_value=D_loss),
                 tf.Summary.Value(tag="G_cost", simple_value=G_loss)
             ])
-            writer.add_summary(summary)
+            writer.add_summary(summary, global_step=epoch)
             writer.flush()
 
         # Generating a sample image and saving it
