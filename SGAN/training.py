@@ -21,6 +21,7 @@ def train(sgancfg,
           D_path=None,
           G_path=None,
           DG_path=None,
+          Adv_path=None,
           initial_epoch=0):
 
     if run_name is None:
@@ -51,6 +52,7 @@ def train(sgancfg,
         G = load_model(G_path)
         D = load_model(D_path)
         DG = load_model(DG_path)
+        Adv = load_model(Adv_path)
     else:
         D, G, DG, Adv = sgan(config)
 
@@ -139,6 +141,8 @@ def train(sgancfg,
         D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
         DG.save(checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) +
                 ".hdf5")
+        Adv.save(checkpoints_dir + "/" + run_name + "_Adv_" + str(epoch) +
+                 ".hdf5")
 
     # Closing the logger
     if use_tensorboard:
