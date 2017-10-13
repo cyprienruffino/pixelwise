@@ -29,6 +29,7 @@ def sgan(config):
             filters=config.gen_fn[l],
             kernel_size=config.gen_ks[l],
             activation="relu",
+            padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
             kernel_initializer=weights_init)(layer)
@@ -40,6 +41,7 @@ def sgan(config):
         filters=config.gen_fn[-1],
         kernel_size=config.gen_ks[-1],
         activation="tanh",
+        padding="same",
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
@@ -51,6 +53,7 @@ def sgan(config):
         filters=config.dis_fn[0],
         kernel_size=config.dis_ks[0],
         activation="linear",
+        padding="same",
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init)(noise)
@@ -61,6 +64,7 @@ def sgan(config):
             filters=config.dis_fn[l],
             kernel_size=config.dis_ks[l],
             activation="linear",
+            padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
             kernel_initializer=weights_init)(layer)
@@ -73,6 +77,7 @@ def sgan(config):
         filters=config.dis_fn[-1],
         kernel_size=config.dis_ks[-1],
         activation="sigmoid",
+        padding="same",
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
