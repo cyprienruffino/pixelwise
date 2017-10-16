@@ -41,7 +41,7 @@ def train(sgancfg,
 
     # Importing Keras must be done after the seeding
     from sgan import sgan
-    from losses import loss_d, loss_g
+    from losses import loss_X, loss_Z
     from keras.optimizers import Adam
     from keras.models import load_model
     from keras.utils import plot_model
@@ -58,9 +58,11 @@ def train(sgancfg,
 
     # Compiling the models (G don't need to be compiled)
     TimePrint("Compiling the network...\n")
-    Adv.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_d)
+    Adv.compile(
+        optimizer=Adam(lr=config.lr, beta_1=config.b1),
+        loss=[loss_X, loss_Z])  # Keras sums the losses
     TimePrint("Discriminator done.")
-    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_g)
+    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_X)
     TimePrint("Generator done.")
 
     # Setting up the TensorBoard logger
@@ -89,6 +91,8 @@ def train(sgancfg,
 
         G_losses = []
         D_losses = []
+        D_fake_losses = []
+        D_real_losses = []
 
         for it in bar(range(int(config.epoch_iters / config.batch_size))):
             samples = next(data_provider)
@@ -111,18 +115,26 @@ def train(sgancfg,
 
             else:
                 # Training the discriminator
-                D_losses.append(
-                    Adv.train_on_batch([samples, Znp],
-                                       [dummy_samples, dummy_Z]))
+                losses = Adv.train_on_batch([samples, Znp],
+                                            [dummy_samples, dummy_Z])
+                D_losses.append(losses[0])
+                D_real_losses.append(losses[1])
+                D_fake_losses.append(losses[2])
 
         G_loss = float(np.mean(G_losses))
         D_loss = float(np.mean(D_losses))
+        D_real_loss = float(np.mean(D_real_losses))
+        D_fake_loss = float(np.mean(D_fake_losses))
 
         # Logging
-        print("Gcost=", G_loss, "  Dcost=", D_loss)
+        print("Gcost=", G_loss, "Dcost=", D_loss, "Dreal_cost=", D_real_loss,
+              "Dfake_cost=", D_fake_loss)
+
         if use_tensorboard:
             summary = tf.Summary(value=[
                 tf.Summary.Value(tag="D_cost", simple_value=D_loss),
+                tf.Summary.Value(tag="D_real_cost", simple_value=D_real_loss),
+                tf.Summary.Value(tag="D_fake_cost", simple_value=D_fake_loss),
                 tf.Summary.Value(tag="G_cost", simple_value=G_loss)
             ])
             writer.add_summary(summary, global_step=epoch)
