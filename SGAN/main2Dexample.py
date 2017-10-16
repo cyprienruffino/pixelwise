@@ -1,5 +1,6 @@
 from training import train
 from data_io2D import get_texture_iter
+from config import Config
 
 if __name__ == "__main__":
     train(
