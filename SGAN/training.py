@@ -110,15 +110,16 @@ def train(sgancfg,
 
             if ((epoch * config.epoch_iters + it) % (config.k + 1)) == 0:
                 # Training the generator
-                # We need to freeze the discriminator
                 D.trainable = False
                 G_losses.append(DG.train_on_batch(Znp, dummy_Z))
                 D.trainable = True
 
             else:
                 # Training the discriminator
+                G.trainable = False
                 losses = Adv.train_on_batch([samples, Znp],
                                             [dummy_samples, dummy_Z])
+                G.trainable = True
                 D_losses.append(losses[0])
                 D_real_losses.append(losses[1])
                 D_fake_losses.append(losses[2])
