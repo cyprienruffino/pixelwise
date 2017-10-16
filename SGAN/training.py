@@ -41,7 +41,7 @@ def train(sgancfg,
 
     # Importing Keras must be done after the seeding
     from sgan import sgan
-    from losses import loss_X, loss_Z
+    from losses import loss_true, loss_fake
     from keras.optimizers import Adam
     from keras.models import load_model
     from keras.utils import plot_model
@@ -56,13 +56,15 @@ def train(sgancfg,
     else:
         D, G, DG, Adv = sgan(config)
 
-    # Compiling the models (G don't need to be compiled)
+    # Compiling the models
     TimePrint("Compiling the network...\n")
+
     Adv.compile(
         optimizer=Adam(lr=config.lr, beta_1=config.b1),
-        loss=[loss_X, loss_Z])  # Keras sums the losses
+        loss=[loss_true, loss_fake])  # Keras sums the losses
     TimePrint("Discriminator done.")
-    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_X)
+
+    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_true)
     TimePrint("Generator done.")
 
     # Setting up the TensorBoard logger
