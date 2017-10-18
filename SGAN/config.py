@@ -17,6 +17,11 @@ class Config:
     def __init__(self, name):
 
         # Network setup
+        # GAN or Wasserstein GAN
+        self.losses = "gan",
+        self.clip_gradients = False,
+        self.c = 0.01
+
         # Depth
         self.gen_depth = 5
         self.dis_depth = 5

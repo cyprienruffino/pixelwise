@@ -1,8 +1,24 @@
+import keras.backend as K
 from keras.engine import Model
 from keras.initializers import Constant, RandomNormal
 from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
                           Conv3DTranspose, GaussianNoise, Input, LeakyReLU)
 from keras.regularizers import l2
+from keras.constraints import Constraint
+
+
+class WeightClip(Constraint):
+    '''Clips the weights incident to each hidden unit to be inside a range
+    '''
+
+    def __init__(self, c=0.01):
+        self.c = c
+
+    def __call__(self, p):
+        return K.clip(p, -self.c, self.c)
+
+    def get_config(self):
+        return {'name': self.__class__.__name__, 'c': self.c}
 
 
 def sgan(config):
@@ -13,6 +29,11 @@ def sgan(config):
     elif config.convdims == 3:
         Conv = Conv3D
         ConvTranspose = Conv3DTranspose
+
+    if config.clip_gradients:
+        W_constraint = WeightClip(config.c)
+    else:
+        W_constraint = None
 
     weights_init = RandomNormal(stddev=0.02)
     beta_init = Constant(value=0.0)
@@ -32,7 +53,8 @@ def sgan(config):
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
-            kernel_initializer=weights_init)(layer)
+            kernel_initializer=weights_init,
+            kernel_constraint=W_constraint)(layer)
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
             axis=1)(tconv)
@@ -45,6 +67,7 @@ def sgan(config):
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
+        kernel_constraint=W_constraint,
         name="G_out")(layer)
 
     # Discriminator
@@ -56,7 +79,8 @@ def sgan(config):
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
-        kernel_initializer=weights_init)(noise)
+        kernel_initializer=weights_init,
+        kernel_constraint=W_constraint)(noise)
     layer = LeakyReLU()(layer)
 
     for l in range(1, config.dis_depth - 1):
@@ -67,7 +91,8 @@ def sgan(config):
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
-            kernel_initializer=weights_init)(layer)
+            kernel_initializer=weights_init,
+            kernel_constraint=W_constraint)(layer)
         layer = LeakyReLU()(conv)
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
@@ -81,6 +106,7 @@ def sgan(config):
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
+        kernel_constraint=W_constraint,
         name="D_out")(layer)
 
     # Models
