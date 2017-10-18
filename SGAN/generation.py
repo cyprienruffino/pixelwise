@@ -15,21 +15,25 @@ def generate(generator,
              threshold=True,
              tricatti=True):
 
+    # Seeding the random numbers generators
     config = pickle.load(sgancfg)
     np.random.seed = config.seed
 
     from keras import load_model  # The seed must be set before importing Keras
 
+    # Loading the model
     generator = load_model(generator)
+
     t_start = time.time()
     z_sample1 = np.random.uniform(-1., 1., (samples, config.nz, 10, 10))
 
+    # Making the prediction
     model = generator.predict(z_sample1)[:, 0, :, :]
 
     model = (model + 1) * 0.5  # Convert from [-1,1] to [0,1]
 
+    # A whole lot of complicated treatments
     if filtering:
-
         for ii in range(model.shape[0]):
             model[ii, :] = medfilt(model[ii, :], kernel_size=(3, 3))
 

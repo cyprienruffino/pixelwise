@@ -46,6 +46,7 @@ def train(sgancfg,
     from keras.utils import plot_model
     from keras.backend import get_session
 
+    # Selecting the losses
     if config.losses == "gan":
         from losses import gan_true as loss_true
         from losses import gan_fake as loss_fake
