@@ -7,3 +7,5 @@ checkpoints
 logs
 samples
 *.sgancfg
+test.py
+test/
