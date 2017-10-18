@@ -25,7 +25,8 @@ def generate(generator,
     generator = load_model(generator)
 
     t_start = time.time()
-    z_sample1 = np.random.uniform(-1., 1., (samples, config.nz, 10, 10))
+    z_sample1 = np.random.uniform(-1., 1., (samples, config.nz) +
+                                  (config.nx, ) * config.convdims)
 
     # Making the prediction
     model = generator.predict(z_sample1)[:, 0, :, :]
