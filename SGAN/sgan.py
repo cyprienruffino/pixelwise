@@ -83,7 +83,7 @@ def sgan(config):
         data_format="channels_first",
         kernel_initializer=weights_init,
         kernel_constraint=W_constraint)(noise)
-    layer = LeakyReLU()(layer)
+    layer = LeakyReLU(alpha=0.2)(layer)
 
     for l in range(1, config.dis_depth - 1):
         conv = Conv(
@@ -96,7 +96,7 @@ def sgan(config):
             data_format="channels_first",
             kernel_initializer=weights_init,
             kernel_constraint=W_constraint)(layer)
-        layer = LeakyReLU()(conv)
+        layer = LeakyReLU(alpha=0.2)(conv)
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
             axis=1)(layer)
