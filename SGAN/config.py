@@ -19,6 +19,7 @@ class Config:
         # Network setup
         # GAN or Wasserstein GAN
         self.losses = "gan"
+        self.losses = "softplus_gan"
         # self.losses = "wasserstein"
         self.clip_gradients = False,
         self.c = 0.01

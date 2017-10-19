@@ -55,6 +55,10 @@ def train(sgancfg,
         from losses import wasserstein_true as loss_true
         from losses import wasserstein_fake as loss_fake
         from losses import wasserstein_gen as loss_gen
+    elif config.losses == "softplus_gan":
+        from losses import softplus_gan_true as loss_true
+        from losses import softplus_gan_fake as loss_fake
+        from losses import softplus_gan_gen as loss_gen
     else:
         raise "Unknown losses"
 
