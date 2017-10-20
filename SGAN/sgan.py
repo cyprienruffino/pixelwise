@@ -49,7 +49,7 @@ def sgan(config):
         tconv = ConvTranspose(
             filters=config.gen_fn[l],
             kernel_size=config.gen_ks[l],
-            strides=(2, 2),
+            strides=config.gen_strides,
             activation="relu",
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
@@ -63,7 +63,7 @@ def sgan(config):
     G_out = ConvTranspose(
         filters=config.gen_fn[-1],
         kernel_size=config.gen_ks[-1],
-        strides=(2, 2),
+        strides=config.gen_strides,
         activation="tanh",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
@@ -77,6 +77,7 @@ def sgan(config):
     layer = Conv(
         filters=config.dis_fn[0],
         kernel_size=config.dis_ks[0],
+        strides=config.dis_strides,
         activation="linear",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
@@ -89,7 +90,7 @@ def sgan(config):
         conv = Conv(
             filters=config.dis_fn[l],
             kernel_size=config.dis_ks[l],
-            strides=(2, 2),
+            strides=config.dis_strides,
             activation="linear",
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
@@ -104,7 +105,7 @@ def sgan(config):
     D_out = Conv(
         filters=config.dis_fn[-1],
         kernel_size=config.dis_ks[-1],
-        strides=(2, 2),
+        strides=config.dis_strides,
         activation="sigmoid",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
