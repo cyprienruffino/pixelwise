@@ -21,7 +21,7 @@ class Config:
         # self.losses = "gan"
         self.losses = "softplus_gan"
         # self.losses = "wasserstein"
-        self.clip_gradients = False,
+        self.clip_gradients = False
         self.noise = True
         self.c = 0.01
 
