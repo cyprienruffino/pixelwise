@@ -73,7 +73,10 @@ def sgan(config):
         name="G_out")(layer)
 
     # Discriminator
-    noise = GaussianNoise(stddev=0.1)(X)
+    if config.noise:
+        layer = GaussianNoise(stddev=0.1)(X)
+    else:
+        layer = X
     layer = Conv(
         filters=config.dis_fn[0],
         kernel_size=config.dis_ks[0],
@@ -83,7 +86,7 @@ def sgan(config):
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
-        kernel_constraint=W_constraint)(noise)
+        kernel_constraint=W_constraint)(layer)
     layer = LeakyReLU(alpha=0.2)(layer)
 
     for l in range(1, config.dis_depth - 1):
