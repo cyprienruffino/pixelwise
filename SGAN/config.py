@@ -41,8 +41,6 @@ class Config:
         self.gen_ks = [(5, 5)] * self.gen_depth
         self.dis_ks = [(9, 9)] * self.dis_depth
         self.nc = 1  # Number of channels
-        self.gen_strides = [(2, 2)] * self.gen_depth
-        self.dis_strides = [(2, 2)] * self.dis_depth
 
         # Number of filters
         self.gen_fn = (

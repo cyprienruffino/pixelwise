@@ -2,7 +2,8 @@ import keras.backend as K
 from keras.engine import Model
 from keras.initializers import Constant, RandomNormal
 from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
-                          Conv3DTranspose, GaussianNoise, Input, LeakyReLU)
+                          Conv3DTranspose, GaussianNoise, Input, LeakyReLU,
+                          UpSampling2D, UpSampling3D)
 from keras.regularizers import l2
 from keras.constraints import Constraint
 
@@ -26,9 +27,11 @@ def sgan(config):
     if config.convdims == 2:
         Conv = Conv2D
         ConvTranspose = Conv2DTranspose
+        Upsampling = UpSampling2D
     elif config.convdims == 3:
         Conv = Conv3D
         ConvTranspose = Conv3DTranspose
+        Upsampling = UpSampling3D
 
     if config.clip_gradients:
         W_constraint = WeightClip(config.c)
@@ -44,12 +47,11 @@ def sgan(config):
     X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
 
     # Generator
-    layer = Z
+    layer = layer = Upsampling()(Z)
     for l in range(config.gen_depth - 1):
         tconv = ConvTranspose(
             filters=config.gen_fn[l],
             kernel_size=config.gen_ks[l],
-            strides=config.gen_strides[l],
             activation="relu",
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
@@ -59,11 +61,11 @@ def sgan(config):
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
             axis=1)(tconv)
+        layer = Upsampling()(layer)
 
     G_out = ConvTranspose(
         filters=config.gen_fn[-1],
         kernel_size=config.gen_ks[-1],
-        strides=config.gen_strides[-1],
         activation="tanh",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
@@ -80,7 +82,6 @@ def sgan(config):
     layer = Conv(
         filters=config.dis_fn[0],
         kernel_size=config.dis_ks[0],
-        strides=config.dis_strides[0],
         activation="linear",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
@@ -93,7 +94,6 @@ def sgan(config):
         conv = Conv(
             filters=config.dis_fn[l],
             kernel_size=config.dis_ks[l],
-            strides=config.dis_strides[l],
             activation="linear",
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
@@ -108,7 +108,6 @@ def sgan(config):
     D_out = Conv(
         filters=config.dis_fn[-1],
         kernel_size=config.dis_ks[-1],
-        strides=config.dis_strides[-1],
         activation="sigmoid",
         padding="same",
         kernel_regularizer=l2(config.l2_fac),
