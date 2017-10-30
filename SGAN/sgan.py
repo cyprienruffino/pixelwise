@@ -47,7 +47,7 @@ def sgan(config):
     X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
 
     # Generator
-    layer = layer = Upsampling()(Z)
+    layer = layer = Upsampling((2, 2), data_format="channels_first")(Z)
     for l in range(config.gen_depth - 1):
         tconv = ConvTranspose(
             filters=config.gen_fn[l],
@@ -61,8 +61,7 @@ def sgan(config):
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
             axis=1)(tconv)
-        layer = Upsampling()(layer)
-
+        layer = Upsampling((2, 2), data_format="channels_first")(layer)
     G_out = ConvTranspose(
         filters=config.gen_fn[-1],
         kernel_size=config.gen_ks[-1],
