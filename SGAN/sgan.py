@@ -49,20 +49,21 @@ def sgan(config):
     # Generator
     layer = layer = Upsampling((2, 2), data_format="channels_first")(Z)
     for l in range(config.gen_depth - 1):
-        tconv = ConvTranspose(
+        conv = Conv(
             filters=config.gen_fn[l],
             kernel_size=config.gen_ks[l],
-            activation="relu",
+            activation="linear",
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
             kernel_initializer=weights_init,
             kernel_constraint=W_constraint)(layer)
+        layer = LeakyReLU(alpha=0.2)(conv)
         layer = BatchNormalization(
             gamma_initializer=gamma_init, beta_initializer=beta_init,
-            axis=1)(tconv)
+            axis=1)(layer)
         layer = Upsampling((2, 2), data_format="channels_first")(layer)
-    G_out = ConvTranspose(
+    G_out = Conv(
         filters=config.gen_fn[-1],
         kernel_size=config.gen_ks[-1],
         activation="tanh",
