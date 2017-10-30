@@ -16,17 +16,18 @@ def generate(generator,
              tricatti=True):
 
     # Seeding the random numbers generators
-    config = pickle.load(sgancfg)
+    with open(sgancfg, "rb") as f:
+        config = pickle.load(f)
     np.random.seed = config.seed
 
-    from keras import load_model  # The seed must be set before importing Keras
+    from keras.models import load_model  # The seed must be set before importing Keras
 
     # Loading the model
     generator = load_model(generator)
 
     t_start = time.time()
     z_sample1 = np.random.uniform(-1., 1., (samples, config.nz) +
-                                  (config.nx, ) * config.convdims)
+                                  (config.zx_sample, ) * config.convdims)
 
     # Making the prediction
     model = generator.predict(z_sample1)[:, 0, :, :]
