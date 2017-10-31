@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.signal import medfilt
+from io import TextIOWrapper
 
 
 def generate(generator,
@@ -15,9 +16,17 @@ def generate(generator,
              threshold=True,
              tricatti=True):
 
+    if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
+        with open(sgancfg, "rb") as f:
+            config = pickle.load(f)
+    elif type(sgancfg) == Config:
+        config = sgancfg
+    else:
+        raise TypeError(
+            "sgancfg : unknown type. Must pass a path as a string, an opened file or a Config object"
+        )
+
     # Seeding the random numbers generators
-    with open(sgancfg, "rb") as f:
-        config = pickle.load(f)
     np.random.seed = config.seed
 
     from keras.models import load_model  # The seed must be set before importing Keras

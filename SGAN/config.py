@@ -16,6 +16,8 @@ def zx_to_npx(zx, depth):
 class Config:
     def __init__(self, name):
 
+        self.name = name
+
         # Network setup
         # GAN or Wasserstein GAN
         # self.losses = "gan"
@@ -62,13 +64,14 @@ class Config:
         self.epochs = 50
         self.k = 1  # Number of D updates vs G updates
 
-        # Saving the Config
-        with open(name + ".sgancfg", "wb") as f:
-            pickle.dump(self, f)
-
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        Config(sys.argv[1])
+        conf = Config(sys.argv[1])
+        with open(conf.name + ".sgancfg", "wb") as f:
+            pickle.dump(conf, f)
+
     else:
-        Config(str(datetime.datetime.now()))
+        conf = Config(str(datetime.datetime.now()))
+        with open(conf.name + ".sgancfg", "wb") as f:
+            pickle.dump(conf, f)

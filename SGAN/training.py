@@ -5,8 +5,10 @@ import progressbar
 
 import numpy as np
 from tensorflow import set_random_seed
+from io import TextIOWrapper
 
 from tools import TimePrint, create_dir
+from config import Config
 
 
 def train(sgancfg,
@@ -32,8 +34,15 @@ def train(sgancfg,
     create_dir(samples_dir)
 
     # Loading the config file
-    with open(sgancfg, "rb") as f:
-        config = pickle.load(f)
+    if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
+        with open(sgancfg, "rb") as f:
+            config = pickle.load(f)
+    elif type(sgancfg) == Config:
+        config = sgancfg
+    else:
+        raise TypeError(
+            "sgancfg : unknown type. Must pass a string, a file or a Config object"
+        )
 
     # Seeding the random numbers generators
     np.random.seed(config.seed)
