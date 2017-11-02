@@ -8,6 +8,7 @@ from tensorflow import set_random_seed
 from io import TextIOWrapper
 
 from tools import create_dir
+from config import Config
 
 
 def train(sgancfg,
