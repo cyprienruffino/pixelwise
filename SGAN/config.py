@@ -3,6 +3,8 @@ import pickle
 import sys
 import datetime
 
+from enum import Enum
+
 
 def zx_to_npx(zx, depth):
     '''
@@ -13,6 +15,17 @@ def zx_to_npx(zx, depth):
     return (zx - 1) * 2**depth + 1
 
 
+class Losses(Enum):
+    classical_gan = "classical_gan"
+    softplus_gan = "softplus_gan"
+    wasserstein_gan = "wasserstein_gan"
+
+
+class GenUpscaling(Enum):
+    deconvolution = "deconvolution"
+    upsampling = "upsampling"
+
+
 class Config:
     def __init__(self, name):
 
@@ -20,12 +33,13 @@ class Config:
 
         # Network setup
         # GAN or Wasserstein GAN
-        # self.losses = "gan"
-        self.losses = "softplus_gan"
-        # self.losses = "wasserstein"
+
+        self.losses = Losses.softplus_gan
         self.clip_gradients = False
         self.noise = True
         self.c = 0.01
+
+        self.gen_up = GenUpscaling.deconvolution
 
         # Depth
         self.gen_depth = 5
@@ -40,14 +54,18 @@ class Config:
         self.npx = zx_to_npx(self.zx, self.gen_depth)
 
         # Kernels
-        self.gen_ks = [(5, 5)] * self.gen_depth
-        self.dis_ks = [(9, 9)] * self.dis_depth
+        self.gen_ks = [5] * self.gen_depth
+        self.dis_ks = [9] * self.dis_depth
         self.nc = 1  # Number of channels
 
         # Number of filters
         self.gen_fn = (
             [self.nc] + [2**(n + 6) for n in range(self.gen_depth - 1)])[::-1]
         self.dis_fn = [2**(n + 6) for n in range(self.dis_depth - 1)] + [1]
+
+        # Strides
+        self.gen_strides = [2] * self.gen_depth
+        self.dis_strides = [1] * self.dis_depth
 
         # Hyperparameters
         self.lr = 0.0005  # learning rate of adam

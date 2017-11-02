@@ -7,8 +7,7 @@ import numpy as np
 from tensorflow import set_random_seed
 from io import TextIOWrapper
 
-from tools import TimePrint, create_dir
-from config import Config
+from tools import create_dir
 
 
 def train(sgancfg,
@@ -41,7 +40,7 @@ def train(sgancfg,
         config = sgancfg
     else:
         raise TypeError(
-            "sgancfg : unknown type. Must pass a string, a file or a Config object"
+            "sgancfg : unknown type. Must pass a path as a string, an opened file or a Config object"
         )
 
     # Seeding the random numbers generators
@@ -50,26 +49,9 @@ def train(sgancfg,
 
     # Importing Keras must be done after the seeding
     from sgan import sgan
-    from keras.optimizers import Adam
     from keras.models import load_model
     from keras.utils import plot_model
     from keras.backend import get_session
-
-    # Selecting the losses
-    if config.losses == "gan":
-        from losses import gan_true as loss_true
-        from losses import gan_fake as loss_fake
-        from losses import gan_gen as loss_gen
-    elif config.losses == "wasserstein":
-        from losses import wasserstein_true as loss_true
-        from losses import wasserstein_fake as loss_fake
-        from losses import wasserstein_gen as loss_gen
-    elif config.losses == "softplus_gan":
-        from losses import softplus_gan_true as loss_true
-        from losses import softplus_gan_fake as loss_fake
-        from losses import softplus_gan_gen as loss_gen
-    else:
-        raise "Unknown losses"
 
     # Load or create the model
     if D_path is not None and G_path is not None and DG_path is not None:
@@ -79,17 +61,6 @@ def train(sgancfg,
         Adv = load_model(Adv_path)
     else:
         D, G, DG, Adv = sgan(config)
-
-    # Compiling the models
-    TimePrint("Compiling the network...\n")
-
-    Adv.compile(
-        optimizer=Adam(lr=config.lr, beta_1=config.b1),
-        loss=[loss_true, loss_fake])  # Keras sums the losses
-    TimePrint("Discriminator done.")
-
-    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_gen)
-    TimePrint("Generator done.")
 
     # Setting up the TensorBoard logger
     if use_tensorboard:
@@ -134,16 +105,13 @@ def train(sgancfg,
 
             if ((epoch * config.epoch_iters + it) % (config.k + 1)) == 0:
                 # Training the generator
-                D.trainable = False
                 G_losses.append(DG.train_on_batch(Znp, dummy_Z))
-                D.trainable = True
 
             else:
                 # Training the discriminator
-                G.trainable = False
                 losses = Adv.train_on_batch([samples, Znp],
                                             [dummy_samples, dummy_Z])
-                G.trainable = True
+
                 D_losses.append(losses[0])
                 D_real_losses.append(losses[1])
                 D_fake_losses.append(losses[2])
