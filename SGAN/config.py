@@ -65,7 +65,7 @@ class Config:
 
         # Strides
         self.gen_strides = [2] * self.gen_depth
-        self.dis_strides = [1] * self.dis_depth
+        self.dis_strides = [2] * self.dis_depth
 
         # Hyperparameters
         self.lr = 0.0005  # learning rate of adam

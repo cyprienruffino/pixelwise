@@ -67,7 +67,7 @@ def sgan(config):
                 kernel_size=config.gen_ks[l],
                 activation="linear",
                 padding="same",
-                strides=config.gen_strides[l]
+                strides=config.gen_strides[l],
                 kernel_regularizer=l2(config.l2_fac),
                 data_format="channels_first",
                 kernel_initializer=weights_init,
@@ -126,7 +126,7 @@ def sgan(config):
         kernel_size=config.dis_ks[0],
         activation="linear",
         padding="same",
-        strides=(2, 2),
+        strides=config.dis_strides[0],
         kernel_regularizer=l2(config.l2_fac),
         data_format="channels_first",
         kernel_initializer=weights_init,
@@ -139,7 +139,7 @@ def sgan(config):
             kernel_size=config.dis_ks[l],
             activation="linear",
             padding="same",
-            strides=(2, 2),
+            strides=config.dis_strides[l],
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
             kernel_initializer=weights_init,
@@ -187,7 +187,8 @@ def sgan(config):
     # Keras sums the losses
     Adv.compile(
         optimizer=Adam(lr=config.lr, beta_1=config.b1),
-        loss=[loss_true, loss_fake], loss_weights=[1, 1])
+        loss=[loss_true, loss_fake],
+        loss_weights=[1, 1])
     G.trainable = True
     TimePrint("Discriminator done.")
 
