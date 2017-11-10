@@ -98,7 +98,7 @@ def sgan(config):
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
-            kernel_initializer=weights_init
+            kernel_initializer=weights_init,
             name="G_out")(layer)
 
     elif config.gen_up == GenUpscaling.deconvolution:
@@ -109,7 +109,7 @@ def sgan(config):
             padding="same",
             kernel_regularizer=l2(config.l2_fac),
             data_format="channels_first",
-            kernel_initializer=weights_init
+            kernel_initializer=weights_init,
             name="G_out")(layer)
 
     # Discriminator
