@@ -161,6 +161,10 @@ def sgan(config):
         from losses import gan_true as loss_true
         from losses import gan_fake as loss_fake
         from losses import gan_gen as loss_gen
+    elif config.losses == Losses.epsilon_gan:
+        from losses import epsilon_gan_true as loss_true
+        from losses import epsilon_gan_fake as loss_fake
+        from losses import epsilon_gan_gen as loss_gen
     elif config.losses == Losses.wasserstein_gan:
         from losses import wasserstein_true as loss_true
         from losses import wasserstein_fake as loss_fake

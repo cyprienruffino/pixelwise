@@ -14,15 +14,27 @@ def softplus_gan_gen(y_true, y_pred):
 
 
 def gan_true(y_true, y_pred):
-    return -K.mean(K.log(K.flatten(y_pred) + K.epsilon()))
+    return -K.mean(K.log(K.flatten(y_pred)))
 
 
 def gan_fake(y_true, y_pred):
-    return -K.mean(K.log(1 - K.flatten(y_pred) + K.epsilon()))
+    return -K.mean(K.log(1 - K.flatten(y_pred)))
 
 
 def gan_gen(y_true, y_pred):
     return gan_true(y_true, y_pred)
+
+
+def epsilon_gan_true(y_true, y_pred):
+    return -K.mean(K.log(K.flatten(y_pred) + K.epsilon()))
+
+
+def epsilon_gan_fake(y_true, y_pred):
+    return -K.mean(K.log(1 - K.flatten(y_pred) + K.epsilon()))
+
+
+def epsilon_gan_gen(y_true, y_pred):
+    return epsilon_gan_true(y_true, y_pred)
 
 
 def wasserstein_true(y_true, y_pred):
