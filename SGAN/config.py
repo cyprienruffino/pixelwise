@@ -34,7 +34,7 @@ class Config:
         # Network setup
         # GAN or Wasserstein GAN
 
-        self.losses = Losses.softplus_gan
+        self.losses = Losses.classical_gan
         self.clip_gradients = False
         self.noise = True
         self.c = 0.01
@@ -44,6 +44,7 @@ class Config:
         # Depth
         self.gen_depth = 5
         self.dis_depth = 5
+
 
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
@@ -59,10 +60,9 @@ class Config:
         self.nc = 1  # Number of channels
 
         # Number of filters
-        self.gen_fn = (
-            [self.nc] + [2**(n + 6) for n in range(self.gen_depth - 1)])[::-1]
+        self.gen_fn = [2**(n + 6) for n in range(self.gen_depth - 1, 0, -1)] + [self.nc]
         self.dis_fn = [2**(n + 6) for n in range(self.dis_depth - 1)] + [1]
-
+ 
         # Strides
         self.gen_strides = [2] * self.gen_depth
         self.dis_strides = [2] * self.dis_depth
@@ -77,9 +77,9 @@ class Config:
             10**8)
 
         # Learning parameters
-        self.batch_size = 64
+        self.batch_size = 32
         self.epoch_iters = self.batch_size * 100
-        self.epochs = 50
+        self.epochs = 30
         self.k = 1  # Number of D updates vs G updates
 
 
