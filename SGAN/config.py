@@ -17,6 +17,7 @@ def zx_to_npx(zx, depth):
 
 class Losses(Enum):
     classical_gan = "classical_gan"
+    epsilon_gan = "epsilon_gan"
     softplus_gan = "softplus_gan"
     wasserstein_gan = "wasserstein_gan"
 
