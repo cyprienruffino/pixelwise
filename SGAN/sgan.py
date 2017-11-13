@@ -5,10 +5,10 @@ from keras.initializers import Constant, RandomNormal
 from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
                           Conv3DTranspose, GaussianNoise, Input, LeakyReLU,
                           UpSampling2D, UpSampling3D)
-from keras.optimizers import Adam
+from keras.optimizers import SGD, RMSprop, Adam
 from keras.regularizers import l2
 
-from config import GenUpscaling, Losses
+from config import GenUpscaling, Optimizer, Losses
 from tools import TimePrint
 
 
@@ -174,7 +174,7 @@ def sgan(config):
         from losses import softplus_gan_fake as loss_fake
         from losses import softplus_gan_gen as loss_gen
     else:
-        raise "Unknown losses"
+        raise "Unknown losses " + config.losses
 
     # Creating and compiling the models
     TimePrint("Compiling the network...\n")
@@ -186,10 +186,18 @@ def sgan(config):
         layer.trainable = False
     Adv = Model(inputs=[X, Z], outputs=[D(X), D(G(Z))], name="Adv")
     # Keras sums the losses
+
+    if config.optimizer == Optimizer.adam:
+        optimizer = Adam(lr=config.lr, beta_1=config.b1)
+    elif config.optimizer == Optimizer.rmsprop:
+        optimizer = RMSprop(lr=config.lr)
+    elif config.optimizer == Optimizer.sgd:
+        optimizer = SGD(lr=config.lr, momentum=config.momentum)
+    else:
+        raise "Unknown optimizer " + config.optimizer
+
     Adv.compile(
-        optimizer=Adam(lr=config.lr, beta_1=config.b1),
-        loss=[loss_true, loss_fake],
-        loss_weights=[1, 1])
+        optimizer=optimizer, loss=[loss_true, loss_fake], loss_weights=[1, 1])
     TimePrint("Discriminator done.")
 
     for layer in D.layers:
@@ -197,7 +205,7 @@ def sgan(config):
     for layer in G.layers:
         layer.trainable = True
     DG = Model(inputs=Z, outputs=D(G(Z)), name="DG")
-    DG.compile(optimizer=Adam(lr=config.lr, beta_1=config.b1), loss=loss_gen)
+    DG.compile(optimizer=optimizer, loss=loss_gen)
     TimePrint("Generator done.")
     for layer in D.layers:
         layer.trainable = True
