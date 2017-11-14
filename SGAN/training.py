@@ -76,10 +76,11 @@ def train(sgancfg,
         plot_model(DG, logs_dir + "/DG.png")
         plot_model(Adv, logs_dir + "/Adv.png")
 
-    # Do the actual training
+    # Sampling
     z_sample = np.random.uniform(-1., 1., (1, config.nz) +
                                  ((config.zx_sample, ) * config.convdims))
 
+    # Do the actual training
     for epoch in range(config.epochs):
         print("Epoch", epoch)
         if progress_bar:
@@ -122,20 +123,6 @@ def train(sgancfg,
         D_real_loss = float(np.mean(D_real_losses))
         D_fake_loss = float(np.mean(D_fake_losses))
 
-        # Logging
-        print("Gcost=", G_loss, "Dcost=", D_loss, "Dreal_cost=", D_real_loss,
-              "Dfake_cost=", D_fake_loss)
-
-        if use_tensorboard:
-            summary = tf.Summary(value=[
-                tf.Summary.Value(tag="D_cost", simple_value=D_loss),
-                tf.Summary.Value(tag="D_real_cost", simple_value=D_real_loss),
-                tf.Summary.Value(tag="D_fake_cost", simple_value=D_fake_loss),
-                tf.Summary.Value(tag="G_cost", simple_value=G_loss)
-            ])
-            writer.add_summary(summary, global_step=epoch)
-            writer.flush()
-
         # Generating a sample image and saving it
         data = G.predict(z_sample)
         f = h5py.File(
@@ -143,6 +130,35 @@ def train(sgancfg,
         f.create_dataset('features', data=data)
         f.flush()
         f.close()
+
+        # Logging
+        print("Gcost=", G_loss, "Dcost=", D_loss, "Dreal_cost=", D_real_loss,
+              "Dfake_cost=", D_fake_loss)
+
+        if use_tensorboard:
+            # Logging losses
+            losses_summary = tf.Summary(value=[
+                tf.Summary.Value(tag="D_cost", simple_value=D_loss),
+                tf.Summary.Value(tag="D_real_cost", simple_value=D_real_loss),
+                tf.Summary.Value(tag="D_fake_cost", simple_value=D_fake_loss),
+                tf.Summary.Value(tag="G_cost", simple_value=G_loss)
+            ])
+
+            # Logging samples
+            disc_value = np.mean(D.predict(data)[0])
+            data = np.transpose(data, (0, 2, 3, 1))
+            sample_pl = tf.placeholder(
+                tf.float32, shape=data.shape, name='img')
+            with tf.Session() as sess:
+                samples_summary = sess.run(
+                    tf.summary.image("Disc_value:" + str(disc_value),
+                                     sample_pl),
+                    feed_dict={sample_pl: data})
+
+            writer.add_summary(losses_summary, global_step=epoch)
+            writer.add_summary(samples_summary, global_step=epoch)
+
+            writer.flush()
 
         # Saving
         G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
