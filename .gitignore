@@ -1,11 +1,13 @@
 __pycache__
 .mypy_cache
 .idea
-*.png
-*.hdf5
 checkpoints
 logs
 samples
-*.sgancfg
-test.py
 test/
+
+*.png
+*.hdf5
+*.sgancfg
+*.sh
+test.py
