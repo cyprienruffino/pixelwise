@@ -145,14 +145,12 @@ def train(sgancfg,
             ])
 
             # Logging samples
-            disc_value = np.mean(D.predict(data)[0])
             data = np.transpose(data, (0, 2, 3, 1))
             sample_pl = tf.placeholder(
                 tf.float32, shape=data.shape, name='img')
             with tf.Session() as sess:
                 samples_summary = sess.run(
-                    tf.summary.image("Disc_value:" + str(disc_value),
-                                     sample_pl),
+                    tf.summary.image(str(epoch), sample_pl),
                     feed_dict={sample_pl: data})
 
             writer.add_summary(losses_summary, global_step=epoch)
