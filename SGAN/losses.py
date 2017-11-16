@@ -38,11 +38,11 @@ def epsilon_gan_gen(y_true, y_pred):
 
 
 def wasserstein_true(y_true, y_pred):
-    return K.mean(K.flatten(y_pred))
+    return -K.mean(K.flatten(y_pred))
 
 
 def wasserstein_fake(y_true, y_pred):
-    return -K.mean(K.flatten(y_pred))
+    return K.mean(K.flatten(y_pred))
 
 
 def wasserstein_gen(y_true, y_pred):
