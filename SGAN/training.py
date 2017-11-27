@@ -49,7 +49,7 @@ def train(sgancfg,
     set_random_seed(config.seed)
 
     # Importing Keras must be done after the seeding
-    from sgan import sgan
+    from gan import gan
     from keras.models import load_model
     from keras.utils import plot_model
     from keras.backend import get_session
@@ -61,7 +61,7 @@ def train(sgancfg,
         DG = load_model(DG_path)
         Adv = load_model(Adv_path)
     else:
-        D, G, DG, Adv = sgan(config)
+        D, G, DG, Adv = gan(config)
 
     # Setting up the TensorBoard logger
     if use_tensorboard:
