@@ -11,7 +11,7 @@ def sample_to_png(samples_path, images_path):
         data = np.asarray(f["features"])
         f.flush()
         f.close()
-        out = np.squeeze((data * -1.0) + 1.0) * 128
+        out = np.squeeze(data + 1.0) * 128
         image = Image.fromarray(out.astype("uint32"))
         image.convert("L").save(images_path + "/" + sample + ".png")
 
