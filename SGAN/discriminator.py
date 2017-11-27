@@ -21,6 +21,10 @@ class WeightClip(Constraint):
 
 
 def create_disc(config):
+    conv_kernel = 3
+    l2_fac = 1e-5
+    strides = 2
+    convs = [128, 256, 512]
 
     # Setup
     if config.convdims == 2:
@@ -28,7 +32,7 @@ def create_disc(config):
     elif config.convdims == 3:
         Conv = Conv3D
 
-    if config.clip_gradients:
+    if config.clip_weights:
         W_constraint = WeightClip(config.c)
     else:
         W_constraint = None
@@ -36,38 +40,35 @@ def create_disc(config):
     X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
 
     # Discriminator
-    if config.noise:
-        layer = GaussianNoise(stddev=0.1)(X)
-    else:
-        layer = X
+    layer = GaussianNoise(stddev=0.1)(X)
     layer = Conv(
-        filters=config.dis_fn[0],
-        kernel_size=config.dis_ks[0],
+        filters=convs[0],
+        kernel_size=conv_kernel,
         padding="same",
-        strides=config.dis_strides[0],
-        kernel_regularizer=l2(config.l2_fac),
+        strides=strides,
+        kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         kernel_constraint=W_constraint)(layer)
-    layer = LeakyReLU(alpha=0.2)(layer)
+    layer = LeakyReLU()(layer)
 
-    for l in range(1, config.dis_depth - 1):
+    for l in range(1, len(convs) - 1):
         conv = Conv(
-            filters=config.dis_fn[l],
-            kernel_size=config.dis_ks[l],
+            filters=convs[l],
+            kernel_size=conv_kernel,
             padding="same",
-            strides=config.dis_strides[l],
-            kernel_regularizer=l2(config.l2_fac),
+            strides=strides,
+            kernel_regularizer=l2(l2_fac),
             data_format="channels_first",
             kernel_constraint=W_constraint)(layer)
-        layer = LeakyReLU(alpha=0.2)(conv)
+        layer = LeakyReLU()(conv)
         layer = BatchNormalization(axis=1)(layer)
 
     D_out = Conv(
-        filters=config.dis_fn[-1],
-        kernel_size=config.dis_ks[-1],
+        filters=convs[-1],
+        kernel_size=conv_kernel,
         activation="sigmoid",
         padding="same",
-        kernel_regularizer=l2(config.l2_fac),
+        kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         kernel_constraint=W_constraint,
         name="D_out")(layer)
