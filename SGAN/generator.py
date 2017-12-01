@@ -14,7 +14,7 @@ def create_gen(config):
     conv = None
     G_out = None
 
-    deconv_kernel = 3
+    deconv_kernel = 5
     l2_fac = 1e-5
     deconvs = [512, 256, 128, 64, 1]
 
