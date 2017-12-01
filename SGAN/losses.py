@@ -50,12 +50,12 @@ def wasserstein_gen(y_true, y_pred):
 
 
 def wasserstein_min_true(y_true, y_pred):
-    return -K.min(K.flatten(y_pred))
+    return (1 - K.min(K.flatten(y_pred)))
 
 
 def wasserstein_min_fake(y_true, y_pred):
-    return K.min(K.flatten(y_pred))
+    return K.max(K.flatten(y_pred))
 
 
 def wasserstein_min_gen(y_true, y_pred):
-    return -K.min(K.flatten(y_pred))
+    return (1 - K.min(K.flatten(y_pred)))
