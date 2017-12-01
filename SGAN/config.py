@@ -6,20 +6,13 @@ import datetime
 from enum import Enum
 
 
-def zx_to_npx(zx, depth):
-    '''
-    calculates the size of the output image given a stack of 'same' padded
-    convolutional layers with size depth, and the size of the input field zx
-    '''
-    # note: in theano we'd have zx*2**depth
-    return (zx - 1) * 2**depth + 1
-
 
 class Losses(Enum):
     classical_gan = "classical_gan"
     epsilon_gan = "epsilon_gan"
     softplus_gan = "softplus_gan"
     wasserstein_gan = "wasserstein_gan"
+    wasserstein_min_gan = "wasserstein_min_gan"
 
 
 class Optimizer(Enum):
@@ -49,7 +42,7 @@ class Config:
         # Network setup
         # GAN or Wasserstein GAN
 
-        self.losses = Losses.classical_gan
+        self.losses = Losses.wasserstein_gan
         self.clip_weights = False
         self.clip_gradients = False
         self.c = 0.01
@@ -58,9 +51,8 @@ class Config:
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # num of dim for Z at each field position (d in the paper)
         self.zx = 12  # num of spatial dimensions in Z (l and m in the paper)
-        self.zx_sample = 20  # size of the spatial dimension in Z
+        self.zx_sample = 12  # size of the spatial dimension in Z
         # num of pixels width/height of images in X
-        self.npx = zx_to_npx(self.zx, self.gen_depth)
         self.nc = 1  # Number of channels
 
 
