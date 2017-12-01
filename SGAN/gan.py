@@ -28,6 +28,10 @@ def gan(config):
         from losses import wasserstein_true as loss_true
         from losses import wasserstein_fake as loss_fake
         from losses import wasserstein_gen as loss_gen
+    elif config.losses == Losses.wasserstein_min_gan:
+        from losses import wasserstein_min_true as loss_true
+        from losses import wasserstein_min_fake as loss_fake
+        from losses import wasserstein_min_gen as loss_gen
     elif config.losses == Losses.softplus_gan:
         from losses import softplus_gan_true as loss_true
         from losses import softplus_gan_fake as loss_fake
