@@ -1,4 +1,4 @@
-import keras.backend as K
+acimport keras.backend as K
 from keras.engine import Model
 from keras.constraints import Constraint
 from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input, LeakyReLU,
@@ -21,10 +21,10 @@ class WeightClip(Constraint):
 
 
 def create_disc(config):
-    conv_kernel = 3
+    conv_kernel = 9
     l2_fac = 1e-5
     strides = 2
-    convs = [128, 256, 512]
+    convs = [64, 128, 256, 512, 1]
 
     # Setup
     if config.convdims == 2:
