@@ -22,11 +22,6 @@ class Losses(Enum):
     wasserstein_gan = "wasserstein_gan"
 
 
-class GenUpscaling(Enum):
-    deconvolution = "deconvolution"
-    upsampling = "upsampling"
-
-
 class Optimizer(Enum):
     adam = "adam"
     rmsprop = "rmsprop"
