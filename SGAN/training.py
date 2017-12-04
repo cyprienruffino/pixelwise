@@ -48,6 +48,8 @@ def train(sgancfg,
     np.random.seed(config.seed)
     set_random_seed(config.seed)
 
+    print("Seeding done, importing Keras")
+
     # Importing Keras must be done after the seeding
     from gan import gan
     from keras.models import load_model
