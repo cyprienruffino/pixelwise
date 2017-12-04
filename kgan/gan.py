@@ -1,7 +1,31 @@
+from time import time
+import sys
+
 from keras.engine import Model
 
-from tools import TimePrint
-from factory import get_losses, get_optimizer, get_generator, get_discriminator
+from kgan.factory import get_losses, get_optimizer, get_generator, get_discriminator
+
+class TimePrint(object):
+    '''
+    Simple convenience class to print who long it takes between successive calls to its __init__ function.
+    Usage example:
+        TimePrint("some text")          -- simply prints "some text"
+        <do some stuff here>
+        TimePrint("some other text ")   -- prints "some other text (took ?s)", where ? is the time passed since TimePrint("some text") was called
+    '''
+    t_last = None
+
+    def __init__(self, text):
+        TimePrint.p(text)
+
+    @classmethod
+    def p(cls, text):
+        t = time()
+        print(text)
+        if cls.t_last != None:
+            print(" (took ", t - cls.t_last, "s)")
+        cls.t_last = t
+        sys.stdout.flush()
 
 
 def gan(config):
@@ -9,8 +33,8 @@ def gan(config):
     # Setting up
     loss_true, loss_fake, loss_gen = get_losses(config.losses)
     optimizer = get_optimizer(config.optimizer)(**config.optimizer_params)
-    G = get_generator(config.generator)
-    D = get_discriminator(config.discriminator)
+    G = get_generator(config.generator)(config)
+    D = get_discriminator(config.discriminator)(config)
 
     # Creating and compiling the models
     TimePrint("Compiling the network...\n")

@@ -3,7 +3,7 @@ import pickle
 import sys
 import datetime
 
-from factory import discriminators, generators, losses, optimizers
+from .factory import discriminators, generators, losses, optimizers
 
 
 class Config:

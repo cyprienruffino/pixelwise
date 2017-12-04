@@ -8,7 +8,8 @@ from tensorflow import set_random_seed
 from io import TextIOWrapper
 
 from tools import create_dir
-from config import Config
+
+from kgan.config import Config
 
 
 def train(sgancfg,
@@ -51,7 +52,7 @@ def train(sgancfg,
     print("Seeding done, importing Keras")
 
     # Importing Keras must be done after the seeding
-    from gan import gan
+    from kgan.gan import gan
     from keras.models import load_model
     from keras.utils import plot_model
     from keras.backend import get_session

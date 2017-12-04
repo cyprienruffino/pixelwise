@@ -1,6 +1,6 @@
 from training import train
 from data_io2D import get_texture_iter
-from config import Config
+from kgan.config import Config
 from datetime import datetime
 
 if __name__ == "__main__":

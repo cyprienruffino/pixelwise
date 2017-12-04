@@ -9,7 +9,7 @@ def create_gen(config):
     return _classical_sgan(config)
 
 
-def _classical_sgan(config):
+def classical_sgan(config):
     if config.convdims == 2:
         ConvTranspose = Conv2DTranspose
     elif config.convdims == 3:
@@ -50,7 +50,7 @@ def _classical_sgan(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def _pix2pix_decoder(config):
+def pix2pix_decoder(config):
     if config.convdims == 2:
         ConvTranspose = Conv2DTranspose
     elif config.convdims == 3:
@@ -94,7 +94,7 @@ def _pix2pix_decoder(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def _pix2pix_encoder_decoder(config):
+def pix2pix_encoder_decoder(config):
     if config.convdims == 2:
         Conv = Conv2D
         ConvTranspose = Conv2DTranspose
@@ -213,7 +213,7 @@ def _pix2pix_unet(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def _pix2pix_patchgan(config):
+def pix2pix_patchgan(config):
     if config.convdims == 2:
         ConvTranspose = Conv2DTranspose
     elif config.convdims == 3:
