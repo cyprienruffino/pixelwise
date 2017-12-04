@@ -22,9 +22,9 @@ class Config:
 
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
-        self.nz = 1  # num of dim for Z at each field position (d in the paper)
-        self.zx = 12  # num of spatial dimensions in Z (l and m in the paper)
-        self.zx_sample = 12  # size of the spatial dimension in Z
+        self.nz = 1  # Number of channels in Z
+        self.zx = 12  # Size of each spatial dimensions in Z
+        self.zx_sample = 12
         self.nc = 1  # Number of channels
 
         # Network setup

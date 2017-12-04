@@ -30,9 +30,12 @@ def train(sgancfg,
     if run_name is None:
         run_name = str(time.time())
 
-    create_dir(logs_dir)
-    create_dir(checkpoints_dir)
-    create_dir(samples_dir)
+    if not os.path.exists(logs_dir):
+        create_dir(logs_dir)
+    if not os.path.exists(checkpoints_dir):
+        create_dir(checkpoints_dir)
+    if not os.path.exists(samples_dir):
+        create_dir(samples_dir)
 
     # Loading the config file
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
