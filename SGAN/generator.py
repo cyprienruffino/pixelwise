@@ -1,6 +1,6 @@
 from keras.engine import Model
-from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
-                          Conv3DTranspose, Input, LeakyReLU, ReLU, concatenate)
+from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D, Activation
+                          Conv3DTranspose, Input, LeakyReLU, concatenate)
 from keras.regularizers import l2
 
 
@@ -41,6 +41,7 @@ def _classical_sgan(config):
         kernel_size=deconv_kernel,
         padding="same",
         strides=2,
+        activation="tanh",
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         name="G_out")(layer)
@@ -76,7 +77,7 @@ def _pix2pix_decoder(config):
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first")(layer)
         layer = BatchNormalization(axis=1)(conv)
-        layer = ReLU()(layer)
+        layer = Activation("relu")(layer)
         layer = Dropout(0.5)(layer)
 
     G_out = ConvTranspose(
@@ -84,6 +85,7 @@ def _pix2pix_decoder(config):
         kernel_size=deconv_kernel,
         padding="same",
         strides=2,
+        activation="tanh",
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         name="G_out")(layer)
@@ -122,7 +124,7 @@ def _pix2pix_encoder_decoder(config):
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first")(layer)
         layer = BatchNormalization(axis=1)(conv)
-        layer = ReLU()(layer)
+        layer = Activation("relu")(layer)
 
     # Decoder
     for l in range(len(decoder) - 1):
@@ -134,7 +136,7 @@ def _pix2pix_encoder_decoder(config):
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first")(layer)
         layer = BatchNormalization(axis=1)(conv)
-        layer = ReLU()(layer)
+        layer = Activation("relu")(layer)
         layer = Dropout(0.5)(layer)
 
     G_out = ConvTranspose(
@@ -142,6 +144,7 @@ def _pix2pix_encoder_decoder(config):
         kernel_size=deconv_kernel,
         padding="same",
         strides=2,
+        activation="tanh",
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         name="G_out")(layer)
@@ -179,17 +182,13 @@ def _pix2pix_unet(config):
             strides=2,
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first")(layer)
-            convs.append(conv)
-        layer = ReLU()(conv)
+        convs.append(conv)
+        layer = Activation("relu")(layer)
         layer = BatchNormalization(axis=1)(layer)
 
     # Decoder
     for l in range(len(decoder) - 1):
-        concat = concatenate(
-            [
-                layer,
-                convs[len(encoder) - l - 1]
-            ], axis=1)
+        concat = concatenate([layer, convs[len(encoder) - l - 1]], axis=1)
         conv = ConvTranspose(
             filters=decoder[l],
             kernel_size=deconv_kernel,
@@ -197,7 +196,7 @@ def _pix2pix_unet(config):
             strides=2,
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first")(concatenate)
-        layer = ReLU()(conv)
+        layer = Activation("relu")(layer)
         layer = BatchNormalization(axis=1)(layer)
 
     G_out = ConvTranspose(
@@ -205,6 +204,7 @@ def _pix2pix_unet(config):
         kernel_size=deconv_kernel,
         padding="same",
         strides=2,
+        activation="tanh",
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         name="G_out")(layer)
