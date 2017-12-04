@@ -21,10 +21,238 @@ class WeightClip(Constraint):
 
 
 def create_disc(config):
+    return classical_sgan(config)
+
+
+def classical_sgan(config):
     conv_kernel = 9
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 256, 512, 1]
+
+    # Setup
+    if config.convdims == 2:
+        Conv = Conv2D
+    elif config.convdims == 3:
+        Conv = Conv3D
+
+    if config.clip_weights:
+        W_constraint = WeightClip(config.c)
+    else:
+        W_constraint = None
+
+    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+
+    # Discriminator
+    layer = GaussianNoise(stddev=0.1)(X)
+    layer = Conv(
+        filters=convs[0],
+        kernel_size=conv_kernel,
+        padding="same",
+        strides=strides,
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint)(layer)
+    layer = LeakyReLU()(layer)
+
+    for l in range(1, len(convs) - 1):
+        conv = Conv(
+            filters=convs[l],
+            kernel_size=conv_kernel,
+            padding="same",
+            strides=strides,
+            kernel_regularizer=l2(l2_fac),
+            data_format="channels_first",
+            kernel_constraint=W_constraint)(layer)
+        layer = LeakyReLU()(conv)
+        layer = BatchNormalization(axis=1)(layer)
+
+    D_out = Conv(
+        filters=convs[-1],
+        kernel_size=conv_kernel,
+        activation="sigmoid",
+        padding="same",
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint,
+        name="D_out")(layer)
+
+    return Model(inputs=X, outputs=D_out, name="D")
+
+
+def pix2pix_disc70x70(config):
+    conv_kernel = 4
+    l2_fac = 1e-5
+    strides = 2
+    convs = [64, 128, 256, 512, 1]
+
+    # Setup
+    if config.convdims == 2:
+        Conv = Conv2D
+    elif config.convdims == 3:
+        Conv = Conv3D
+
+    if config.clip_weights:
+        W_constraint = WeightClip(config.c)
+    else:
+        W_constraint = None
+
+    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+
+    # Discriminator
+    layer = GaussianNoise(stddev=0.1)(X)
+    layer = Conv(
+        filters=convs[0],
+        kernel_size=conv_kernel,
+        padding="same",
+        strides=strides,
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint)(layer)
+    layer = LeakyReLU()(layer)
+
+    for l in range(1, len(convs) - 1):
+        conv = Conv(
+            filters=convs[l],
+            kernel_size=conv_kernel,
+            padding="same",
+            strides=strides,
+            kernel_regularizer=l2(l2_fac),
+            data_format="channels_first",
+            kernel_constraint=W_constraint)(layer)
+        layer = LeakyReLU()(conv)
+        layer = BatchNormalization(axis=1)(layer)
+
+    D_out = Conv(
+        filters=convs[-1],
+        kernel_size=conv_kernel,
+        activation="sigmoid",
+        padding="same",
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint,
+        name="D_out")(layer)
+
+    return Model(inputs=X, outputs=D_out, name="D")
+
+
+def pix2pix_disc1x1(config):
+    conv_kernel = 1
+    l2_fac = 1e-5
+    strides = 2
+    convs = [64, 128, 1]
+
+    # Setup
+    if config.convdims == 2:
+        Conv = Conv2D
+    elif config.convdims == 3:
+        Conv = Conv3D
+
+    if config.clip_weights:
+        W_constraint = WeightClip(config.c)
+    else:
+        W_constraint = None
+
+    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+
+    # Discriminator
+    layer = GaussianNoise(stddev=0.1)(X)
+    layer = Conv(
+        filters=convs[0],
+        kernel_size=conv_kernel,
+        padding="same",
+        strides=strides,
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint)(layer)
+    layer = LeakyReLU()(layer)
+
+    for l in range(1, len(convs) - 1):
+        conv = Conv(
+            filters=convs[l],
+            kernel_size=conv_kernel,
+            padding="same",
+            strides=strides,
+            kernel_regularizer=l2(l2_fac),
+            data_format="channels_first",
+            kernel_constraint=W_constraint)(layer)
+        layer = LeakyReLU()(conv)
+        layer = BatchNormalization(axis=1)(layer)
+
+    D_out = Conv(
+        filters=convs[-1],
+        kernel_size=conv_kernel,
+        activation="sigmoid",
+        padding="same",
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint,
+        name="D_out")(layer)
+
+    return Model(inputs=X, outputs=D_out, name="D")
+
+
+def pix2pix_disc16x16(config):
+    conv_kernel = 4
+    l2_fac = 1e-5
+    strides = 2
+    convs = [64, 128, 1]
+
+    # Setup
+    if config.convdims == 2:
+        Conv = Conv2D
+    elif config.convdims == 3:
+        Conv = Conv3D
+
+    if config.clip_weights:
+        W_constraint = WeightClip(config.c)
+    else:
+        W_constraint = None
+
+    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+
+    # Discriminator
+    layer = GaussianNoise(stddev=0.1)(X)
+    layer = Conv(
+        filters=convs[0],
+        kernel_size=conv_kernel,
+        padding="same",
+        strides=strides,
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint)(layer)
+    layer = LeakyReLU()(layer)
+
+    for l in range(1, len(convs) - 1):
+        conv = Conv(
+            filters=convs[l],
+            kernel_size=conv_kernel,
+            padding="same",
+            strides=strides,
+            kernel_regularizer=l2(l2_fac),
+            data_format="channels_first",
+            kernel_constraint=W_constraint)(layer)
+        layer = LeakyReLU()(conv)
+        layer = BatchNormalization(axis=1)(layer)
+
+    D_out = Conv(
+        filters=convs[-1],
+        kernel_size=conv_kernel,
+        activation="sigmoid",
+        padding="same",
+        kernel_regularizer=l2(l2_fac),
+        data_format="channels_first",
+        kernel_constraint=W_constraint,
+        name="D_out")(layer)
+
+    return Model(inputs=X, outputs=D_out, name="D")
+
+
+def pix2pix_disc256x256(config):
+    conv_kernel = 4
+    l2_fac = 1e-5
+    strides = 2
+    convs = [64, 128, 256, 512, 512, 512, 1]
 
     # Setup
     if config.convdims == 2:
