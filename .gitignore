@@ -11,4 +11,5 @@ test
 *.hdf5
 *.sgancfg
 *.sh
+*.txt
 test.py
