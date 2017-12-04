@@ -3,23 +3,6 @@ import pickle
 import sys
 import datetime
 
-from enum import Enum
-
-
-
-class Losses(Enum):
-    classical_gan = "classical_gan"
-    epsilon_gan = "epsilon_gan"
-    softplus_gan = "softplus_gan"
-    wasserstein_gan = "wasserstein_gan"
-    wasserstein_min_gan = "wasserstein_min_gan"
-
-
-class Optimizer(Enum):
-    adam = "adam"
-    rmsprop = "rmsprop"
-    sgd = "sgd"
-
 
 class Config:
     def __init__(self, name):
@@ -34,6 +17,8 @@ class Config:
         self.epoch_iters = self.batch_size * 100
         self.epochs = 40
         self.k = 1  # Number of D updates vs G updates
+
+        self.optimizer_params = {"lr": self.lr, "beta_1": self.b1}
 
         # Seed, for reproductibility. Set np.random.seed with this
         self.seed = int(hashlib.sha1(name.encode("utf-8")).hexdigest(), 16) % (
