@@ -25,7 +25,7 @@ class losses(Enum):
     wasserstein_min_gan = "wasserstein_min_gan"
 
 
-class optimizer(Enum):
+class optimizers(Enum):
     adam = "adam"
     rmsprop = "rmsprop"
     sgd = "sgd"
@@ -92,16 +92,13 @@ def get_losses(loss):
     return loss_true, loss_fake, loss_gen
 
 
-def get_optimizer(optimizer, config):
-    if optimizer == optimizer.adam:
-        from keras.optimizers import Adam
-        _optimizer = Adam(lr=config.lr, beta_1=config.b1)
-    elif optimizer == optimizer.rmsprop:
-        from keras.optimizers import RMSProp
-        _optimizer = RMSProp(lr=config.lr)
-    elif optimizer == optimizer.sgd:
-        from keras.optimizers import SGD
-        _optimizer = SGD(lr=config.lr, momentum=config.momentum)
+def get_optimizer(optimizer):
+    if optimizer == optimizers.adam:
+        from keras.optimizers import Adam as _optimizer
+    elif optimizer == optimizers.rmsprop:
+        from keras.optimizers import RMSProp as _optimizer
+    elif optimizer == optimizers.sgd:
+        from keras.optimizers import SGD as _optimizer
     else:
         raise "Unknown optimizer " + optimizer
     return _optimizer
