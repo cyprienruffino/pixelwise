@@ -1,6 +1,7 @@
 from keras.engine import Model
-from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D, Activation
-                          Conv3DTranspose, Input, LeakyReLU, concatenate)
+from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
+                          Activation, Conv3DTranspose, Input, LeakyReLU,
+                          concatenate)
 from keras.regularizers import l2
 
 
