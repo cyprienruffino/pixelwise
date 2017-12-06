@@ -24,7 +24,4 @@ def gan(discriminator, generator, loss_true, loss_fake, loss_gen, optimizer):
     DG = Model(inputs=Z, outputs=discriminator(generator(Z)), name="DG")
     DG.compile(optimizer=optimizer, loss=loss_gen)
 
-    for layer in discriminator.layers:
-        layer.trainable = True
-
     return discriminator, generator, DG, Adv
