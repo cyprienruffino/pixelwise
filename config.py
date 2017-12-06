@@ -2,8 +2,10 @@ import hashlib
 import pickle
 import sys
 import datetime
-
-from .factory import discriminators, generators, losses, optimizers
+from kgan.applications.discriminators import classical_sgan_disc
+from kgan.applications.generators import classical_sgan_gen
+from kgan.losses import wasserstein_fake, wasserstein_true, wasserstein_gen
+from kgan.optimizers import Adam
 
 
 class Config:
@@ -28,14 +30,16 @@ class Config:
         self.nc = 1  # Number of channels
 
         # Network setup
-        self.discriminator = discriminators.classical_sgan
-        self.generator = generators.classical_sgan
-        self.losses = losses.wasserstein_gan
+        self.discriminator = classical_sgan_disc
+        self.generator = classical_sgan_gen
+        self.loss_fake = wasserstein_fake
+        self.loss_true = wasserstein_true
+        self.loss_gen = wasserstein_gen
         self.clip_weights = True  # Clip the discriminator weights (cf Wasserstein GAN)
         self.c = 0.01  # Clipping value
 
         # Optimizer
-        self.optimizer = optimizers.adam
+        self.optimizer = Adam
         self.lr = 0.0005  # learning rate
         self.b1 = 0.5  # Adam momentum term
         self.optimizer_params = {"lr": self.lr, "beta_1": self.b1}

@@ -1,47 +1,30 @@
-import keras.backend as K
-from keras.engine import Model
-from keras.constraints import Constraint
-from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input, LeakyReLU,
-                          GaussianNoise)
-from keras.regularizers import l2
+def classical_sgan_disc(convdims=2,
+                        channels=1,
+                        clip_weights=False,
+                        clipping_value=0.01):
+    from kgan.constraints import Clip
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
+                              LeakyReLU, GaussianNoise)
+    from keras.regularizers import l2
 
-
-class WeightClip(Constraint):
-    '''Clips the weights incident to each hidden unit to be inside a range
-    '''
-
-    def __init__(self, c=0.01):
-        self.c = c
-
-    def __call__(self, p):
-        return K.clip(p, -self.c, self.c)
-
-    def get_config(self):
-        return {'name': self.__class__.__name__, 'c': self.c}
-
-
-def create_disc(config):
-    return classical_sgan(config)
-
-
-def classical_sgan(config):
     conv_kernel = 9
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 256, 512, 1]
 
     # Setup
-    if config.convdims == 2:
+    if convdims == 2:
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
 
-    if config.clip_weights:
-        W_constraint = WeightClip(config.c)
+    if clip_weights:
+        W_constraint = Clip(clipping_value)
     else:
         W_constraint = None
 
-    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
@@ -80,24 +63,33 @@ def classical_sgan(config):
     return Model(inputs=X, outputs=D_out, name="D")
 
 
-def pix2pix_disc70x70(config):
+def pix2pix_70x70_disc(convdims=2,
+                       channels=1,
+                       clip_weights=False,
+                       clipping_value=0.01):
+    from kgan.constraints import Clip
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
+                              LeakyReLU, GaussianNoise)
+    from keras.regularizers import l2
+
     conv_kernel = 4
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 256, 512, 1]
 
     # Setup
-    if config.convdims == 2:
+    if convdims == 2:
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
 
-    if config.clip_weights:
-        W_constraint = WeightClip(config.c)
+    if clip_weights:
+        W_constraint = Clip(clipping_value)
     else:
         W_constraint = None
 
-    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
@@ -136,24 +128,33 @@ def pix2pix_disc70x70(config):
     return Model(inputs=X, outputs=D_out, name="D")
 
 
-def pix2pix_disc1x1(config):
+def pix2pix_1x1_disc(convdims=2,
+                     channels=1,
+                     clip_weights=False,
+                     clipping_value=0.01):
+    from kgan.constraints import Clip
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
+                              LeakyReLU, GaussianNoise)
+    from keras.regularizers import l2
+
     conv_kernel = 1
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 1]
 
     # Setup
-    if config.convdims == 2:
+    if convdims == 2:
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
 
-    if config.clip_weights:
-        W_constraint = WeightClip(config.c)
+    if clip_weights:
+        W_constraint = Clip(clipping_value)
     else:
         W_constraint = None
 
-    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
@@ -192,24 +193,33 @@ def pix2pix_disc1x1(config):
     return Model(inputs=X, outputs=D_out, name="D")
 
 
-def pix2pix_disc16x16(config):
+def pix2pix_16x16_disc(convdims=2,
+                       channels=1,
+                       clip_weights=False,
+                       clipping_value=0.01):
+    from kgan.constraints import Clip
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
+                              LeakyReLU, GaussianNoise)
+    from keras.regularizers import l2
+
     conv_kernel = 4
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 1]
 
     # Setup
-    if config.convdims == 2:
+    if convdims == 2:
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
 
-    if config.clip_weights:
-        W_constraint = WeightClip(config.c)
+    if clip_weights:
+        W_constraint = Clip(clipping_value)
     else:
         W_constraint = None
 
-    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
@@ -248,24 +258,33 @@ def pix2pix_disc16x16(config):
     return Model(inputs=X, outputs=D_out, name="D")
 
 
-def pix2pix_disc256x256(config):
+def pix2pix_256x256_disc(convdims=2,
+                         channels=1,
+                         clip_weights=False,
+                         clipping_value=0.01):
+    from kgan.constraints import Clip
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
+                              LeakyReLU, GaussianNoise)
+    from keras.regularizers import l2
+
     conv_kernel = 4
     l2_fac = 1e-5
     strides = 2
     convs = [64, 128, 256, 512, 512, 512, 1]
 
     # Setup
-    if config.convdims == 2:
+    if convdims == 2:
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
 
-    if config.clip_weights:
-        W_constraint = WeightClip(config.c)
+    if clip_weights:
+        W_constraint = Clip(clipping_value)
     else:
         W_constraint = None
 
-    X = Input((config.nc, ) + (None, ) * config.convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)

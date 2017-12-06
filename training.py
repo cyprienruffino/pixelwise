@@ -2,14 +2,13 @@ import pickle
 import time
 import h5py
 import progressbar
+import os
 
 import numpy as np
 from tensorflow import set_random_seed
 from io import TextIOWrapper
 
-from tools import create_dir
-
-from kgan.config import Config
+from config import Config
 
 
 def train(sgancfg,
@@ -31,11 +30,11 @@ def train(sgancfg,
         run_name = str(time.time())
 
     if not os.path.exists(logs_dir):
-        create_dir(logs_dir)
+        os.mkdir(logs_dir)
     if not os.path.exists(checkpoints_dir):
-        create_dir(checkpoints_dir)
+        os.mkdir(checkpoints_dir)
     if not os.path.exists(samples_dir):
-        create_dir(samples_dir)
+        os.mkdir(samples_dir)
 
     # Loading the config file
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
@@ -67,7 +66,13 @@ def train(sgancfg,
         DG = load_model(DG_path)
         Adv = load_model(Adv_path)
     else:
-        D, G, DG, Adv = gan(config)
+        optimizer = config.optimizer(config.optimizer_params)
+        G = config.generator(config.convdims, config.nc, config.clip_weights,
+                             config.c)
+        D = config.discriminator(config.convdims, config.nc,
+                                 config.clip_weights, config.c)
+        D, G, DG, Adv = gan(D, G, config.loss_true, config.loss_fake,
+                            config.loss_gen, optimizer)
 
     # Setting up the TensorBoard logger
     if use_tensorboard:

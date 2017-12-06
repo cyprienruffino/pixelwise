@@ -1,18 +1,14 @@
-from keras.engine import Model
-from keras.layers import (BatchNormalization, Conv2D, Conv2DTranspose, Conv3D,
-                          Activation, Conv3DTranspose, Input, LeakyReLU,
-                          concatenate)
-from keras.regularizers import l2
-
-
-def create_gen(config):
-    return _classical_sgan(config)
-
-
-def classical_sgan(config):
-    if config.convdims == 2:
+def classical_sgan_gen(convdims=2,
+                       channels=1,
+                       clip_weights=False,
+                       clipping_value=0.01):
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2DTranspose,
+                              Conv3DTranspose, Input, LeakyReLU)
+    from keras.regularizers import l2
+    if convdims == 2:
         ConvTranspose = Conv2DTranspose
-    elif config.convdims == 3:
+    elif convdims == 3:
         ConvTranspose = Conv3DTranspose
 
     conv = None
@@ -23,7 +19,7 @@ def classical_sgan(config):
     deconvs = [512, 256, 128, 64, 1]
 
     # Generator
-    Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
+    Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
     for l in range(len(deconvs) - 1):
@@ -50,10 +46,16 @@ def classical_sgan(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def pix2pix_decoder(config):
-    if config.convdims == 2:
+def pix2pix_decoder_gen(convdims=2,
+                        channels=1,
+                        clip_weights=False,
+                        clipping_value=0.01):
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2DTranspose,
+                              Conv3DTranspose, Input, Activation, Dropout)
+    if convdims == 2:
         ConvTranspose = Conv2DTranspose
-    elif config.convdims == 3:
+    elif convdims == 3:
         ConvTranspose = Conv3DTranspose
 
     conv = None
@@ -65,7 +67,7 @@ def pix2pix_decoder(config):
     decoder = [512, 512, 512, 512, 512, 256, 128, 64, 1]
 
     # Generator
-    Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
+    Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
     # Decoder
@@ -94,11 +96,18 @@ def pix2pix_decoder(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def pix2pix_encoder_decoder(config):
-    if config.convdims == 2:
+def pix2pix_encoder_decoder_gen(convdims=2,
+                                channels=1,
+                                clip_weights=False,
+                                clipping_value=0.01):
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2DTranspose,
+                              Conv3DTranspose, Input, Activation, Conv2D,
+                              Conv3D, Dropout)
+    if convdims == 2:
         Conv = Conv2D
         ConvTranspose = Conv2DTranspose
-    elif config.convdims == 3:
+    elif convdims == 3:
         Conv = Conv3D
         ConvTranspose = Conv3DTranspose
 
@@ -112,7 +121,7 @@ def pix2pix_encoder_decoder(config):
     decoder = [512, 512, 512, 512, 512, 256, 128, 64, 1]
 
     # Generator
-    Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
+    Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
     # Encoder
@@ -153,11 +162,18 @@ def pix2pix_encoder_decoder(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def _pix2pix_unet(config):
-    if config.convdims == 2:
+def _pix2pix_unet_gen(convdims=2,
+                      channels=1,
+                      clip_weights=False,
+                      clipping_value=0.01):
+    from keras.engine import Model
+    from keras.layers import (BatchNormalization, Conv2DTranspose,
+                              Conv3DTranspose, Input, Activation, concatenate,
+                              Conv2D, Conv3D, Dropout)
+    if convdims == 2:
         ConvTranspose = Conv2DTranspose
         Conv = Conv2D
-    elif config.convdims == 3:
+    elif convdims == 3:
         ConvTranspose = Conv3DTranspose
         Conv = Conv2D
 
@@ -170,7 +186,7 @@ def _pix2pix_unet(config):
     decoder = [512, 512, 512, 512, 512, 256, 128, 64, 1]
 
     # Generator
-    Z = Input((config.nz, ) + (None, ) * config.convdims, name="Z")
+    Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
     # Encoder
@@ -196,7 +212,7 @@ def _pix2pix_unet(config):
             padding="same",
             strides=2,
             kernel_regularizer=l2(l2_fac),
-            data_format="channels_first")(concatenate)
+            data_format="channels_first")(concat)
         layer = Activation("relu")(layer)
         layer = BatchNormalization(axis=1)(layer)
 
@@ -213,10 +229,13 @@ def _pix2pix_unet(config):
     return Model(inputs=Z, outputs=G_out, name="G")
 
 
-def pix2pix_patchgan(config):
-    if config.convdims == 2:
+def pix2pix_patchgan_gen(convdims=2,
+                         channels=1,
+                         clip_weights=False,
+                         clipping_value=0.01):
+    if convdims == 2:
         ConvTranspose = Conv2DTranspose
-    elif config.convdims == 3:
+    elif convdims == 3:
         ConvTranspose = Conv3DTranspose
 
     raise NotImplemented

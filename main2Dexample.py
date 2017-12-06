@@ -1,11 +1,14 @@
+import os
+
 from training import train
 from data_io2D import get_texture_iter
-from kgan.config import Config
+from config import Config
 from datetime import datetime
 
 if __name__ == "__main__":
     run_name = str(datetime.now())
     config = Config(run_name)
+    os.mkdir("runs/" + run_name)
     print(run_name)
     train(
         sgancfg=config,
