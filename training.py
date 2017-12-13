@@ -64,10 +64,16 @@ def train(sgancfg,
 
     # Load or create the model
     if D_path is not None and G_path is not None and DG_path is not None:
-        G = load_model(G_path)
-        D = load_model(D_path)
-        DG = load_model(DG_path)
-        Adv = load_model(Adv_path)
+        custom_objects = {
+            config.loss_true.__name__: config.loss_true,
+            config.loss_fake.__name__: config.loss_fake,
+            config.loss_gen.__name__: config.loss_gen,
+        }
+
+        G = load_model(G_path, custom_objects=custom_objects)
+        D = load_model(D_path, custom_objects=custom_objects)
+        DG = load_model(DG_path, custom_objects=custom_objects)
+        Adv = load_model(Adv_path, custom_objects=custom_objects)
     else:
         optimizer = config.optimizer(config.optimizer_params)
         G = config.generator(config.convdims, config.nc, config.clip_weights,
