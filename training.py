@@ -23,6 +23,8 @@ def train(sgancfg,
           plot_models=True,
           save_json=True,
           save_config_file=True,
+          generate_png=True,
+          generate_hdf5=True,
           D_path=None,
           G_path=None,
           DG_path=None,
@@ -38,6 +40,10 @@ def train(sgancfg,
         os.mkdir(checkpoints_dir)
     if not os.path.exists(samples_dir):
         os.mkdir(samples_dir)
+
+    if generate_png:
+        from PIL import Image
+
 
     # Loading the config file
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
@@ -158,12 +164,21 @@ def train(sgancfg,
         D_fake_loss = float(np.mean(D_fake_losses))
 
         # Generating a sample image and saving it
-        data = G.predict(z_sample)
-        f = h5py.File(
-            samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
-        f.create_dataset('features', data=data)
-        f.flush()
-        f.close()
+
+        if generate_png or generate_hdf5:
+            data = G.predict(z_sample)
+
+        if generate_png:
+            out = np.squeeze((data + 1.) * 128.)
+            image = Image.fromarray(np.uint8(out))
+            image.save(samples_dir + run_name + "_" + str(epoch) + ".png")
+
+        if generate_png or generate_hdf5:
+            f = h5py.File(
+                samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
+            f.create_dataset('features', data=data)
+            f.flush()
+            f.close()
 
         # Logging
         print("Gcost=", G_loss, "Dcost=", D_loss, "Dreal_cost=", D_real_loss,
