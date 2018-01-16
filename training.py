@@ -138,42 +138,31 @@ def train(sgancfg,
 
         G_losses = []
         D_losses = []
-        D_fake_losses = []
-        D_real_losses = []
 
         for it in bar(range(int(config.epoch_iters / config.batch_size))):
             samples = next(data_provider)
 
             # Creating the input noise
             Znp = np.random.uniform(-1., 1., (config.batch_size, config.nz) +
-                                    ((config.zx, ) * config.convdims))
+                ((config.zx, ) * config.convdims))
 
             # We need to define a dummy array as a Keras train step need labels
             # (even if they are not used)
             dummy_Z = np.zeros(Znp.shape)
-            dummy_samples = np.zeros(samples.shape)
 
             if ((epoch * config.epoch_iters + it) % (config.k + 1)) == 0:
                 # Training the generator
-                G_losses.append(DG.train_on_batch(Znp, dummy_Z))
+                losses = DG.train_on_batch(Znp, dummy_Z)
+                G_losses.append(losses)
 
             else:
-                # Training the discriminator
-                losses = Adv.train_on_batch([samples, Znp],
-                                            [dummy_samples, dummy_Z])
-
-                D_losses.append(losses[0])
-                D_real_losses.append(losses[1])
-                D_fake_losses.append(losses[2])
+                losses = Adv.train_on_batch([samples, Znp], dummy_Z)
+                D_losses.append(losses)
 
         G_loss = float(np.mean(G_losses))
         D_loss = float(np.mean(D_losses))
-        D_real_loss = float(np.mean(D_real_losses))
-        D_fake_loss = float(np.mean(D_fake_losses))
 
         # Generating a sample image and saving it
-        data = G.predict(z_sample)
-        f = h5py.File(
         if generate_png or generate_hdf5:
             data = G.predict(z_sample)
 
@@ -185,9 +174,6 @@ def train(sgancfg,
         if generate_hdf5:
             f = h5py.File(
             samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
-        f.create_dataset('features', data=data)
-        f.flush()
-        f.close()
             f.create_dataset('features', data=data)
             f.flush()
             f.close()
