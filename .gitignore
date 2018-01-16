@@ -1,17 +1,24 @@
 __pycache__
 .mypy_cache
 .idea
+.ropeproject
 checkpoints
 logs
 samples
 images
 test
+venv
+runs
+ti_2D
+ti_3D
 
 *.png
 *.hdf5
 *.sgancfg
+*.sgan
 *.sh
 *.txt
+*.pyc
 
 notebook.py
 test.py
