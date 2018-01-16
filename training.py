@@ -78,9 +78,8 @@ def train(sgancfg,
                              config.c)
         D = config.discriminator(config.convdims, config.nc,
                                  config.clip_weights, config.c)
-        D, G, DG, Adv = gan(D, G, config.loss_true, config.loss_fake,
-                            config.loss_gen, optimizer)
 
+        D, G, DG, Adv = gan(D, G, loss_disc, config.loss_gen, optimizer)
     # Setting up the TensorBoard logger
     if use_tensorboard:
         import tensorflow as tf
