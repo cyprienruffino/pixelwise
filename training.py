@@ -79,7 +79,16 @@ def train(sgancfg,
         D = config.discriminator(config.convdims, config.nc,
                                  config.clip_weights, config.c)
 
+        if config.gradient_penalty:
+            from kgan.losses import gradient_penalty
+            gp = gradient_penalty(D.input, G.input, D, G)
+            loss_disc = lambda y_true, y_pred: config.loss_disc(y_true, y_pred) + config.lmbda * gp(y_true, y_pred)
+
+        else:
+            loss_disc = config.loss_disc
+
         D, G, DG, Adv = gan(D, G, loss_disc, config.loss_gen, optimizer)
+
     # Setting up the TensorBoard logger
     if use_tensorboard:
         import tensorflow as tf
