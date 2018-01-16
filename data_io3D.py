@@ -12,10 +12,10 @@ def tensor_to_2Dimage(tensor):
     img = np.array(tensor).transpose( (1,2,0) )
     img = (img + 1.) * 128.
     return np.uint8(img)
-    
 
-def get_texture_iter(folder, npx=128, batch_size=64, \
-                     filter=None, mirror=True, n_channel=3):
+
+def get_texture_iter(folder, npx=64, batch_size=64, \
+                     filter=None, mirror=True, n_channel=1):
     '''
     @param folder       iterate of pictures from this folder
     @param npx          size of patches to extract
@@ -70,7 +70,7 @@ def save_tensor(tensor, filename):
     else:
         img = Image.fromarray(img)
     img.save(filename+'.png')
-	
+
      # save 4D tensor
     tensor=(tensor+1)*0.5 # Convert from [-1,1] to [0,1]
     f = h5py.File(filename+'.hdf5', mode='w')
