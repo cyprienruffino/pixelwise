@@ -26,7 +26,11 @@ def train(sgancfg,
           progress_bar=True,
           use_tensorboard=True,
           plot_models=True,
+          save_json=True,
           save_config_file=True,
+          generate_png=True,
+          generate_hdf5=True,
+          log_metadata=True,
           D_path=None,
           G_path=None,
           DG_path=None,
@@ -42,6 +46,10 @@ def train(sgancfg,
         os.mkdir(checkpoints_dir)
     if not os.path.exists(samples_dir):
         os.mkdir(samples_dir)
+
+    if generate_png:
+        from PIL import Image
+
 
     # Loading the config file
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
@@ -102,6 +110,17 @@ def train(sgancfg,
         plot_model(DG, logs_dir + "/DG.png")
         plot_model(Adv, logs_dir + "/Adv.png")
 
+    # Saving models structure
+    if save_json:
+        with open(logs_dir + "/D.json", "w") as f:
+            f.write(D.to_json())
+        with open(logs_dir + "/G.json", "w") as f:
+            f.write(G.to_json())
+        with open(logs_dir + "/DG.json", "w") as f:
+            f.write(DG.to_json())
+        with open(logs_dir + "/Adv.json", "w") as f:
+            f.write(Adv.to_json())
+
     if save_config_file:
         shutil.copy("config.py", logs_dir + "/config.py")
 
@@ -155,45 +174,66 @@ def train(sgancfg,
         # Generating a sample image and saving it
         data = G.predict(z_sample)
         f = h5py.File(
+        if generate_png or generate_hdf5:
+            data = G.predict(z_sample)
+
+        if generate_png:
+            out = np.squeeze((data + 1.) * 128.)
+            image = Image.fromarray(np.uint8(out))
+            image.save(samples_dir + run_name + "_" + str(epoch) + ".png")
+
+        if generate_hdf5:
+            f = h5py.File(
             samples_dir + run_name + "_" + str(epoch) + ".hdf5", mode="w")
         f.create_dataset('features', data=data)
         f.flush()
         f.close()
+            f.create_dataset('features', data=data)
+            f.flush()
+            f.close()
+
+        if epoch == 5 and log_metadata:
+            # Create an object to hold the tracing data
+            run_metadata = tf.RunMetadata()
+
+            # Run one step and collect the tracing data
+            _, loss = K.get_session().run([train_op, loss_op], options=tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE), run_metadata=run_metadata)
+
+            # Add summary to the summary writer
+            writer.add_run_metadata(run_metadata, 'step%d', global_step)
 
         # Logging
-        print("Gcost=", G_loss, "Dcost=", D_loss, "Dreal_cost=", D_real_loss,
-              "Dfake_cost=", D_fake_loss)
+        print("Gcost=", G_loss, "Dcost=", D_loss)
 
         if use_tensorboard:
             # Logging losses
             losses_summary = tf.Summary(value=[
                 tf.Summary.Value(tag="D_cost", simple_value=D_loss),
-                tf.Summary.Value(tag="D_real_cost", simple_value=D_real_loss),
-                tf.Summary.Value(tag="D_fake_cost", simple_value=D_fake_loss),
                 tf.Summary.Value(tag="G_cost", simple_value=G_loss)
             ])
 
             # Logging samples
             data = np.transpose(data, (0, 2, 3, 1))
             sample_pl = tf.placeholder(
-                tf.float32, shape=data.shape, name='img')
+            tf.float32, shape=data.shape, name='img')
             with tf.Session() as sess:
                 samples_summary = sess.run(
                     tf.summary.image(str(epoch), sample_pl),
-                    feed_dict={sample_pl: data})
+                    feed_dict={
+                    sample_pl: data
+                })
 
             writer.add_summary(losses_summary, global_step=epoch)
             writer.add_summary(samples_summary, global_step=epoch)
-
             writer.flush()
 
         # Saving
         G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
         D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
-        DG.save(checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) +
-                ".hdf5")
-        Adv.save(checkpoints_dir + "/" + run_name + "_Adv_" + str(epoch) +
-                 ".hdf5")
+        DG.save(
+            checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) + ".hdf5")
+        Adv.save(
+            checkpoints_dir + "/" + run_name + "_Adv_" + str(epoch) + ".hdf5")
 
     # Closing the logger
     if use_tensorboard:
