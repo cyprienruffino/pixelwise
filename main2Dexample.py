@@ -13,11 +13,7 @@ def run():
     config = Config(run_name)
     train(
         sgancfg=config,
-<<<<<<< HEAD
         data_provider=get_texture_iter("ti_2D/", batch_size=config.batch_size, npx=config.npx, n_channel=config.nc, mirror=False),
-=======
-        data_provider=get_texture_iter("ti_2D/", batch_size=config.batch_size, npx=384, n_channel=config.nc, mirror=False),
->>>>>>> 0b5c0d0697be2f2b4d201a251999cd38520fe751
         run_name=run_name,
         checkpoints_dir="runs/" + run_name + "/checkpoints/",
         logs_dir="runs/" + run_name + "/logs/",
