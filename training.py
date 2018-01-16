@@ -3,12 +3,18 @@ import time
 import h5py
 import progressbar
 import os
+import shutil
 
 import numpy as np
 from tensorflow import set_random_seed
 from io import TextIOWrapper
 
 from config import Config
+
+def write_config(config, file):
+    with open(file, "w") as f:
+        for prop, value in vars(config).items():
+            f.write(prop + ": " + str(value) + "\n")
 
 
 def train(sgancfg,
@@ -20,6 +26,7 @@ def train(sgancfg,
           progress_bar=True,
           use_tensorboard=True,
           plot_models=True,
+          save_config_file=True,
           D_path=None,
           G_path=None,
           DG_path=None,
@@ -86,6 +93,9 @@ def train(sgancfg,
         plot_model(G, logs_dir + "/G.png")
         plot_model(DG, logs_dir + "/DG.png")
         plot_model(Adv, logs_dir + "/Adv.png")
+
+    if save_config_file:
+        shutil.copy("config.py", logs_dir + "/config.py")
 
     # Sampling
     z_sample = np.random.uniform(-1., 1., (1, config.nz) +
