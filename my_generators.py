@@ -1,4 +1,7 @@
-def classical_sgan_gen(convdims=2,
+
+
+def classical_sgan_gen(zx,
+                       convdims=2,
                        channels=1,
                        clip_weights=False,
                        clipping_value=0.01):
@@ -16,17 +19,13 @@ def classical_sgan_gen(convdims=2,
     init = RandomNormal(stddev=0.02)
     conv = None
     G_out = None
-<<<<<<< HEAD
     deconv_kernel = 5
-=======
-    deconv_kernel = 9
->>>>>>> 0b5c0d0697be2f2b4d201a251999cd38520fe751
     l2_fac = 1e-5
     epsilon = 1e-4
     deconvs = [512, 256, 128, 64, 1]
 
     # Generator
-    Z = Input((channels, ) + (None, ) * convdims, name="Z")
+    Z = Input((channels, ) + (zx, ) * convdims, name="Z")
     layer = Z
 
     for l in range(len(deconvs) - 1):
@@ -49,11 +48,6 @@ def classical_sgan_gen(convdims=2,
         activation="tanh",
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
-<<<<<<< HEAD
         data_format="channels_first")(layer)
-=======
-        data_format="channels_first",
-        name="G_out")(layer)
->>>>>>> 0b5c0d0697be2f2b4d201a251999cd38520fe751
 
     return Model(inputs=Z, outputs=G_out, name="G")
