@@ -87,7 +87,7 @@ def train(sgancfg,
             G_losses.append(losses)
 
             # Training the discriminator
-            for i in config.k:
+            for _ in range(config.k):
                 losses = Adv.train_on_batch([samples, Znp], dummy_Z)
                 D_losses.append(losses)
 

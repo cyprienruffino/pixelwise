@@ -16,7 +16,6 @@ ti_3D
 *.hdf5
 *.sgancfg
 *.sgan
-*.sh
 *.txt
 *.pyc
 
