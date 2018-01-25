@@ -33,6 +33,8 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
 
         D, G, DG, Adv = gan(D, G, loss_disc, config.loss_gen, optimizer)
 
+    return D, G, DG, Adv
+
 
 def load_config(sgancfg):
     # Loading the config file
@@ -45,4 +47,4 @@ def load_config(sgancfg):
         raise TypeError(
             "sgancfg : unknown type. Must pass a path as a string, an opened file or a Config object"
         )
-    return Config
+    return config
