@@ -62,7 +62,6 @@ def train(sgancfg,
 
     if plot_models: log.plot_models(D, G, DG, Adv, logs_dir)
     if save_json: log.save_jsons(D, G, DG, Adv, logs_dir)
-    if save_config_file: shutil.copy("config.py", logs_dir + "/config.py")
 
     # Do the actual training
     G_losses_history = []
