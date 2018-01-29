@@ -10,7 +10,7 @@ def gan(discriminator, generator, loss_disc, loss_gen, optimizer):
     for layer in generator.layers:
         layer.trainable = False
 
-    adv_output = concatenate([discriminator(X), dg], axis=1)
+    adv_output = concatenate([discriminator(X), dg], axis=0)
     Adv = Model(inputs=[X, Z], outputs=adv_output, name="Adv")
     Adv.compile(optimizer=optimizer, loss=loss_disc)
 
