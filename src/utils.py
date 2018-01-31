@@ -26,12 +26,14 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
         if config.gradient_penalty:
             from kgan.losses import gradient_penalty
             gp = gradient_penalty(D.input, G.input, D, G)
-            loss_disc = lambda y_true, y_pred: config.loss_disc(y_true, y_pred) + config.lmbda * gp(y_true, y_pred)
+            loss_disc_fake = lambda y_true, y_pred: config.loss_disc_fake(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
+            loss_disc_true = lambda y_true, y_pred: config.loss_disc_true(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
 
         else:
-            loss_disc = config.loss_disc
+            loss_disc_fake = config.loss_disc_fake
+            loss_disc_true = config.loss_disc_true
 
-        D, G, DG, Adv = gan(D, G, loss_disc, config.loss_gen, optimizer)
+        D, G, DG, Adv = gan(D, G, loss_disc_fake, loss_disc_true, config.loss_gen, optimizer)
 
     return D, G, DG, Adv
 

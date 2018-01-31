@@ -38,7 +38,7 @@ class Config:
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
         self.zx = 12  # Size of each spatial dimensions in Z
-        self.zx_sample = 20
+        self.zx_sample = 12
         self.nc = 1  # Number of channels
         self.npx = zx_to_npx(self.zx, 5)
 

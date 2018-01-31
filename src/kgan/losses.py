@@ -31,9 +31,14 @@ def epsilon_gan_gen(y_true, y_pred):
     return -K.mean(K.log(K.flatten(y_pred) + K.epsilon()))
 
 
-def wasserstein_disc(y_true, y_pred):
+def wasserstein_disc_fake(y_true, y_pred):
     import keras.backend as K
-    return K.mean(K.flatten(y_pred[1])) - K.mean(K.flatten(y_pred[0]))
+    return K.mean(K.flatten(y_pred))
+
+
+def wasserstein_disc_true(y_true, y_pred):
+    import keras.backend as K
+    return -K.mean(K.flatten(y_pred))
 
 
 def wasserstein_gen(y_true, y_pred):

@@ -88,8 +88,8 @@ def train(sgancfg,
 
             # Training the discriminator
             for _ in range(config.k):
-                losses = Adv.train_on_batch([samples, Znp], dummy_Z)
-                D_losses.append(losses)
+                losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
+                D_losses.append(losses[0] + losses[1])
 
         # Epoch end, logging
         G_loss = float(np.mean(G_losses))

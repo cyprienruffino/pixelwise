@@ -1,6 +1,5 @@
-def gan(discriminator, generator, loss_disc, loss_gen, optimizer):
+def gan(discriminator, generator, loss_disc_true, loss_disc_fake, loss_gen, optimizer):
     from keras.engine import Model
-    from keras.layers import concatenate
 
     X = discriminator.input
     Z = generator.input
@@ -10,9 +9,8 @@ def gan(discriminator, generator, loss_disc, loss_gen, optimizer):
     for layer in generator.layers:
         layer.trainable = False
 
-    adv_output = concatenate([discriminator(X), dg], axis=0)
-    Adv = Model(inputs=[X, Z], outputs=adv_output, name="Adv")
-    Adv.compile(optimizer=optimizer, loss=loss_disc)
+    Adv = Model(inputs=[X, Z], outputs=[discriminator(X), dg], name="Adv")
+    Adv.compile(optimizer=optimizer, loss=[loss_disc_true, loss_disc_fake])
 
     for layer in discriminator.layers:
         layer.trainable = False
