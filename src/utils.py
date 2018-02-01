@@ -33,7 +33,7 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
             loss_disc_fake = config.loss_disc_fake
             loss_disc_true = config.loss_disc_true
 
-        D, G, DG, Adv = gan(D, G, loss_disc_fake, loss_disc_true, config.loss_gen, optimizer)
+        D, G, DG, Adv = gan(D, G, loss_disc_true, loss_disc_fake, config.loss_gen, optimizer)
 
     return D, G, DG, Adv
 

@@ -20,10 +20,14 @@ def gan_gen(y_true, y_pred):
     return -K.mean(K.log(K.flatten(y_pred[0])))
 
 
-def epsilon_gan_disc(y_true, y_pred):
+def epsilon_gan_disc_fake(y_true, y_pred):
     import keras.backend as K
-    return (-K.mean(K.log(K.flatten(y_pred[0]) + K.epsilon()))
-        -K.mean(K.log(1 - K.flatten(y_pred[1]) + K.epsilon())))
+    return -K.mean(K.log(1 - K.flatten(y_pred) + K.epsilon()))
+
+
+def epsilon_gan_disc_true(y_true, y_pred):
+    import keras.backend as K
+    return -K.mean(K.log(K.flatten(y_pred) + K.epsilon()))
 
 
 def epsilon_gan_gen(y_true, y_pred):
