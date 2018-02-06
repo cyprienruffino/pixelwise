@@ -97,8 +97,9 @@ def train(sgancfg,
         D_losses_history.append(D_loss)
         print("Gcost=", G_loss, "Dcost=", D_loss)
 
+        if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
+
         if config.convdims == 2:
-            if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
             if generate_png: log.gen_png(data, samples_dir, run_name, epoch)
             if use_tensorboard: log.tensorboard_log_image(data, writer, epoch)
 
