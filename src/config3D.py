@@ -43,13 +43,13 @@ class Config:
         # Network setup
         self.discriminator = classical_sgan_disc
         self.generator = classical_sgan_gen
-        self.loss_disc_fake = wasserstein_disc_fake
-        self.loss_disc_true = wasserstein_disc_true
-        self.loss_gen = wasserstein_gen
+        self.loss_disc_fake = epsilon_gan_disc_fake
+        self.loss_disc_true = epsilon_gan_disc_true
+        self.loss_gen = epsilon_gan_gen
         self.clip_weights = False  # Clip the discriminator weights (cf Wasserstein GAN)
-        self.gradient_penalty = True
+        self.gradient_penalty = False
         self.c = 0.01  # Clipping value
-        self.k = 5  # Number of D updates vs G updates
+        self.k = 1  # Number of D updates vs G updates
         self.lmbda = 10  # Gradient penalty factor
 
         # Optimizer
