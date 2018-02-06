@@ -97,10 +97,13 @@ def train(sgancfg,
         D_losses_history.append(D_loss)
         print("Gcost=", G_loss, "Dcost=", D_loss)
 
-        if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
-        if generate_png: log.gen_png(data, samples_dir, run_name, epoch)
+        if config.convdims == 2:
+            if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
+            if generate_png: log.gen_png(data, samples_dir, run_name, epoch)
+            if use_tensorboard: log.tensorboard_log_image(data, writer, epoch)
+
         if generate_hdf5: log.gen_hdf5(data, samples_dir, run_name, epoch)
-        if use_tensorboard: log.tensorboard_log(data, D_loss, G_loss, writer, epoch)
+        if use_tensorboard: log.tensorboard_log_losses(D_loss, G_loss, writer, epoch)
         if checkpoint_models: log.save_models(D, G, DG, Adv, checkpoints_dir, run_name, epoch)
 
     # Run end

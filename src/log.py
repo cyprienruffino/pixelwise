@@ -74,7 +74,24 @@ def setup_tensorboard(logs_dir, run_name):
     return tf.summary.FileWriter(logs_dir + "/" + run_name, get_session().graph)
 
 
-def tensorboard_log(sample, D_loss, G_loss, writer, epoch):
+def tensorboard_log_image(sample, writer, epoch):
+    import tensorflow as tf
+    # Logging samples
+    data = np.transpose(sample, (0, 2, 3, 1))
+    sample_pl = tf.placeholder(tf.float32, shape=data.shape, name='img')
+
+    with tf.Session() as sess:
+        samples_summary = sess.run(
+            tf.summary.image(str(epoch), sample_pl),
+            feed_dict={
+                sample_pl: data
+            })
+
+    writer.add_summary(samples_summary, global_step=epoch)
+    writer.flush()
+
+
+def tensorboard_log_losses(D_loss, G_loss, writer, epoch):
     import tensorflow as tf
 
     # Logging losses
@@ -83,18 +100,7 @@ def tensorboard_log(sample, D_loss, G_loss, writer, epoch):
         tf.Summary.Value(tag="G_cost", simple_value=G_loss)
     ])
 
-    # Logging samples
-    data = np.transpose(sample, (0, 2, 3, 1))
-    sample_pl = tf.placeholder(tf.float32, shape=data.shape, name='img')
-    with tf.Session() as sess:
-        samples_summary = sess.run(
-            tf.summary.image(str(epoch), sample_pl),
-            feed_dict={
-                sample_pl: data
-            })
-
     writer.add_summary(losses_summary, global_step=epoch)
-    writer.add_summary(samples_summary, global_step=epoch)
     writer.flush()
 
 
