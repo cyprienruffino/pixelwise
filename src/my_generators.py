@@ -2,9 +2,8 @@
 
 def classical_sgan_gen(zx,
                        convdims=2,
-                       channels=1,
-                       clip_weights=False,
-                       clipping_value=0.01):
+                       gen_depth=5,
+                       channels=1):
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2DTranspose,
                               Conv3DTranspose, Input, LeakyReLU)
@@ -22,7 +21,7 @@ def classical_sgan_gen(zx,
     deconv_kernel = 5
     l2_fac = 1e-5
     epsilon = 1e-4
-    deconvs = [512, 256, 128, 64, 1]
+    deconvs = [pow(2,i+5) for i in range(gen_depth - 1, 0, -1)] + [1]
 
     # Generator
     Z = Input((channels, ) + (zx, ) * convdims, name="Z")

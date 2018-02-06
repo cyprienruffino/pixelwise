@@ -19,9 +19,18 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
         Adv = load_model(Adv_path, custom_objects=custom_objects)
     else:
         optimizer = config.optimizer(config.optimizer_params)
-        G = config.generator(config.zx, config.convdims, config.nc, config.c)
-        D = config.discriminator(config.npx, config.convdims, config.nc,
-                                 config.clip_weights, config.c)
+
+        G = config.generator(config.zx,
+                             convdims=config.convdims,
+                             channes=config.nc,
+                             gen_depth=config.gen_depth)
+
+        D = config.discriminator(config.npx,
+                                 convdims=config.convdims,
+                                 channels=config.nc,
+                                 disc_depth=config.disc_depth,
+                                 clip_weights=config.clip_weights,
+                                 clipping_value=config.c)
 
         if config.gradient_penalty:
             from kgan.losses import gradient_penalty

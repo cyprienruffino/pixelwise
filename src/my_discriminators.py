@@ -2,6 +2,7 @@
 
 def classical_sgan_disc(npx,
                         convdims=2,
+                        disc_depth=5,
                         channels=1,
                         clip_weights=False,
                         clipping_value=0.01):
@@ -16,7 +17,8 @@ def classical_sgan_disc(npx,
     l2_fac = 1e-5
     strides = 2
     epsilon = 1e-4
-    convs = [64, 128, 256, 512, 1]
+    depth=5
+    convs = [pow(2,i+6) for i in range(disc_depth - 1)] + [1]
     init = RandomNormal(stddev=0.02)
 
     # Setup
