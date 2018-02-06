@@ -22,7 +22,7 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
 
         G = config.generator(config.zx,
                              convdims=config.convdims,
-                             channes=config.nc,
+                             channels=config.nc,
                              gen_depth=config.gen_depth)
 
         D = config.discriminator(config.npx,
