@@ -74,8 +74,6 @@ def train(sgancfg,
         G_losses = []
         D_losses = []
         for it in bar(range(iters)):
-            samples = next(data_provider)
-
             Znp = sample_noise(config)
 
             # We need to define a dummy array as a Keras train step need labels
@@ -88,6 +86,7 @@ def train(sgancfg,
 
             # Training the discriminator
             for _ in range(config.k):
+                samples = next(data_provider)
                 losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
                 D_losses.append(losses[0] + losses[1])
 
