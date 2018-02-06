@@ -24,7 +24,7 @@ def classical_sgan_gen(zx,
     deconvs = [pow(2,i+5) for i in range(gen_depth - 1, 0, -1)] + [1]
 
     # Generator
-    Z = Input((channels, ) + (zx, ) * convdims, name="Z")
+    Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
     for l in range(len(deconvs) - 1):

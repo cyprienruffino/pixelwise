@@ -32,7 +32,7 @@ def classical_sgan_disc(npx,
     else:
         W_constraint = None
 
-    X = Input((channels, ) + (npx, ) * convdims, name="X")
+    X = Input((channels, ) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
