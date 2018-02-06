@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print(run_name)
     train(
         sgancfg=config,
-        data_provider=get_texture_iter("ti_3D/", batch_size=config.batch_size),
+        data_provider=get_texture_iter("ti_3D/", batch_size=config.batch_size, npx=config.npx, n_channel=config.nc, mirror=False),
         run_name=run_name,
         checkpoints_dir="runs/" + run_name + "/checkpoints/",
         logs_dir="runs/" + run_name + "/logs/",
