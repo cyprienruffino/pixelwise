@@ -8,13 +8,13 @@ from kgan.losses import *
 from kgan.optimizers import Adam
 
 
-def zx_to_npx(zx, gen_depth):
+def zx_to_npx(zx, depth):
     '''
     calculates the size of the output image given a stack of 'same' padded
     convolutional layers with size depth, and the size of the input field zx
     '''
     # note: in theano we'd have zx*2**depth
-    return zx * (2 ** gen_depth)
+    return zx * (2 ** depth)
 
 
 class Config:
@@ -26,25 +26,22 @@ class Config:
             10**8)
 
         # Training settings
-        self.batch_size = 25
-        self.epoch_iters = 100
+        self.batch_size = 24
+        self.epoch_iters = (64 - self.batch_size) * 100
         self.epochs = 50
 
         # Data dimensions
-        self.convdims = 3  # 2D or 3D convolutions
-        self.disc_depth = 3
-        self.gen_depth = 3
+        self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
-        self.zx = 4  # Size of each spatial dimensions in Z
-        self.zx_sample = 5
+        self.zx = 12  # Size of each spatial dimensions in Z
+        self.zx_sample = 12
         self.nc = 1  # Number of channels
-        self.npx = zx_to_npx(self.zx, self.gen_depth)
+        self.npx = zx_to_npx(self.zx, 5)
 
         # Network setup
         self.discriminator = classical_sgan_disc
         self.generator = classical_sgan_gen
-        self.loss_disc_fake = epsilon_gan_disc_fake
-        self.loss_disc_true = epsilon_gan_disc_true
+        self.loss_disc = epsilon_gan_disc
         self.loss_gen = epsilon_gan_gen
         self.clip_weights = False  # Clip the discriminator weights (cf Wasserstein GAN)
         self.gradient_penalty = False

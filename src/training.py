@@ -68,7 +68,7 @@ def train(sgancfg,
     D_losses_history = []
     for epoch in range(config.epochs):
         print("Epoch", epoch)
-        iters = (config.epoch_iters // config.batch_size) // (config.k + 1)
+        iters = (config.epoch_iters) // (config.k)
         bar = progressbar.ProgressBar(maxvalue=iters)
 
         G_losses = []
