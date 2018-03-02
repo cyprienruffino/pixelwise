@@ -26,17 +26,17 @@ class Config:
             10**8)
 
         # Training settings
-        self.batch_size = 25
-        self.epoch_iters = 100
+        self.batch_size = 24
+        self.epoch_iters = 50
         self.epochs = 50
 
         # Data dimensions
-        self.convdims = 3  # 2D or 3D convolutions
-        self.disc_depth = 3
-        self.gen_depth = 3
+        self.convdims = 2  # 2D or 3D convolutions
+        self.disc_depth = 5
+        self.gen_depth = 5
         self.nz = 1  # Number of channels in Z
-        self.zx = 4  # Size of each spatial dimensions in Z
-        self.zx_sample = 5
+        self.zx = 12  # Size of each spatial dimensions in Z
+        self.zx_sample = 20
         self.nc = 1  # Number of channels
         self.npx = zx_to_npx(self.zx, self.gen_depth)
 
@@ -51,6 +51,22 @@ class Config:
         self.c = 0.01  # Clipping value
         self.k = 1  # Number of D updates vs G updates
         self.lmbda = 10  # Gradient penalty factor
+
+        self.disc_args={
+            "filter_size": 9,
+            "depth": self.disc_depth,
+            "channels": self.nc,
+            "convdims": self.convdims,
+            "clip_weights": self.clip_weights,
+            "clipping_value": self.c
+        }
+
+        self.gen_args = {
+            "filter_size": 5,
+            "depth": self.gen_depth,
+            "convdims": self.convdims,
+            "channels": self.nc
+        }
 
         # Optimizer
         self.optimizer = Adam
