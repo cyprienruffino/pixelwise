@@ -8,7 +8,7 @@ from tensorflow import set_random_seed
 
 import log
 import utils
-
+import time
 
 def sample_noise(config):
     return np.random.uniform(-1., 1., (config.batch_size, config.nz) +
@@ -79,15 +79,20 @@ def train(sgancfg,
             # We need to define a dummy array as a Keras train step need labels
             # (even if they are not used)
             dummy_Z = np.zeros(Znp.shape)
-
+            start = time.clock()
             # Training the generator
             losses = DG.train_on_batch(Znp, dummy_Z)
             G_losses.append(losses)
-
+            print("DG step", time.clock() - start)
             # Training the discriminator
+            start = time.clock()
+
             for _ in range(config.k):
                 samples = next(data_provider)
+                start = time.clock()
                 losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
+                print("Adv step", time.clock() - start)
+
                 D_losses.append(losses[0] + losses[1])
 
         # Epoch end, logging

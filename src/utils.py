@@ -12,25 +12,17 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
             config.loss_true.__name__: config.loss_disc,
             config.loss_gen.__name__: config.loss_gen
         }
-
         G = load_model(G_path, custom_objects=custom_objects)
         D = load_model(D_path, custom_objects=custom_objects)
         DG = load_model(DG_path, custom_objects=custom_objects)
         Adv = load_model(Adv_path, custom_objects=custom_objects)
+
     else:
         optimizer = config.optimizer(config.optimizer_params)
 
-        G = config.generator(config.zx,
-                             convdims=config.convdims,
-                             channels=config.nc,
-                             gen_depth=config.gen_depth)
+        G = config.generator(**config.gen_args)
 
-        D = config.discriminator(config.npx,
-                                 convdims=config.convdims,
-                                 channels=config.nc,
-                                 disc_depth=config.disc_depth,
-                                 clip_weights=config.clip_weights,
-                                 clipping_value=config.c)
+        D = config.discriminator(**config.disc_args)
 
         if config.gradient_penalty:
             from kgan.losses import gradient_penalty

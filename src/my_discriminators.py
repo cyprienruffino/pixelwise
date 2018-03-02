@@ -1,11 +1,10 @@
-
-
-def classical_sgan_disc(npx,
-                        convdims=2,
-                        disc_depth=5,
-                        channels=1,
-                        clip_weights=False,
-                        clipping_value=0.01):
+def classical_sgan_disc(
+        filter_size=5,
+        convdims=2,
+        depth=5,
+        channels=1,
+        clip_weights=False,
+        clipping_value=0.01):
     from kgan.constraints import Clip
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
@@ -13,12 +12,10 @@ def classical_sgan_disc(npx,
     from keras.regularizers import l2
     from keras.initializers import RandomNormal
 
-    conv_kernel = 9
     l2_fac = 1e-5
     strides = 2
     epsilon = 1e-4
-    depth=5
-    convs = [pow(2,i+6) for i in range(disc_depth - 1)] + [1]
+    convs = [pow(2, i + 6) for i in range(depth - 1)] + [1]
     init = RandomNormal(stddev=0.02)
 
     # Setup
@@ -32,13 +29,13 @@ def classical_sgan_disc(npx,
     else:
         W_constraint = None
 
-    X = Input((channels, ) + (None, ) * convdims, name="X")
+    X = Input((channels,) + (None,) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
     layer = Conv(
         filters=convs[0],
-        kernel_size=conv_kernel,
+        kernel_size=filter_size,
         padding="same",
         strides=strides,
         use_bias=False,
@@ -51,7 +48,7 @@ def classical_sgan_disc(npx,
     for l in range(1, len(convs) - 1):
         conv = Conv(
             filters=convs[l],
-            kernel_size=conv_kernel,
+            kernel_size=filter_size,
             padding="same",
             strides=strides,
             use_bias=False,
@@ -60,10 +57,11 @@ def classical_sgan_disc(npx,
             data_format="channels_first",
             kernel_constraint=W_constraint)(layer)
         layer = LeakyReLU()(conv)
+        layer = BatchNormalization(axis=1, epsilon=epsilon)(layer)
 
     D_out = Conv(
         filters=convs[-1],
-        kernel_size=conv_kernel,
+        kernel_size=filter_size,
         activation="sigmoid",
         padding="same",
         strides=strides,
