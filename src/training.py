@@ -30,10 +30,10 @@ def train(sgancfg,
           save_json=True,
           generate_png=True,
           generate_hdf5=True,
+          save_summaries=True,
           D_path=None,
-          G_path=None,
-          DG_path=None,
-          Adv_path=None):
+          G_path=None):
+
     log.create_dirs(logs_dir, checkpoints_dir, samples_dir)
     config = utils.load_config(sgancfg)
 
@@ -42,13 +42,14 @@ def train(sgancfg,
     set_random_seed(config.seed)
 
     # Load or create the model
-    D, G, DG, Adv = utils.load_models(config, D_path, G_path, DG_path, Adv_path)
+    D, G, DG, Adv = utils.load_models(config, D_path, G_path)
 
     # Setting up the TensorBoard logger
     if use_tensorboard:
         writer = log.setup_tensorboard(logs_dir, run_name)
 
     if plot_models: log.plot_models(D, G, DG, Adv, logs_dir)
+    if save_summaries: log.save_summaries(D, G, DG, Adv, logs_dir)
     if save_json: log.save_jsons(D, G, DG, Adv, logs_dir)
 
     # Do the actual training
@@ -56,12 +57,12 @@ def train(sgancfg,
     D_losses_history = []
     for epoch in range(config.epochs):
         print("Epoch", epoch)
-        iters = (config.epoch_iters) // (config.k)
+        iters = config.epoch_iters // config.k
         bar = progressbar.ProgressBar(maxvalue=iters)
 
         G_losses = []
         D_losses = []
-        for it in bar(range(iters)):
+        for _ in bar(range(iters)):
             Znp = sample_noise(config)
 
             # We need to define a dummy array as a Keras train step need labels
@@ -83,7 +84,6 @@ def train(sgancfg,
         D_loss = float(np.mean(D_losses))
         G_losses_history.append(G_loss)
         D_losses_history.append(D_loss)
-        print("Gcost=", G_loss, "Dcost=", D_loss)
 
         if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
 
@@ -93,7 +93,7 @@ def train(sgancfg,
 
         if generate_hdf5: log.gen_hdf5(data, samples_dir, run_name, epoch)
         if use_tensorboard: log.tensorboard_log_losses(D_loss, G_loss, writer, epoch)
-        if checkpoint_models: log.save_models(D, G, DG, Adv, checkpoints_dir, run_name, epoch)
+        if checkpoint_models: utils.save_models(D, G, checkpoints_dir, run_name, epoch)
 
     # Run end
     if use_tensorboard: writer.close()
