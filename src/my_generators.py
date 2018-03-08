@@ -3,23 +3,21 @@
 def classical_sgan_gen(
         filter_size=5,
         convdims=2,
-                       depth=5,
-                       channels=1):
+        depth=5,
+        channels=1,
+        init="glorot_uniform",
+        l2_fac=1e-5,
+        epsilon=1e-4,
+        deconvs=[512, 256, 128, 64, 1]):
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2DTranspose,
                               Conv3DTranspose, Input)
     from keras.regularizers import l2
-    from keras.initializers import RandomNormal
 
     if convdims == 2:
         ConvTranspose = Conv2DTranspose
     elif convdims == 3:
         ConvTranspose = Conv3DTranspose
-
-    init = RandomNormal(stddev=0.02)
-    l2_fac = 1e-5
-    epsilon = 1e-4
-    deconvs = [pow(2,i+5) for i in range(depth - 1, 0, -1)] + [1]
 
     # Generator
     Z = Input((channels, ) + (None, ) * convdims, name="Z")

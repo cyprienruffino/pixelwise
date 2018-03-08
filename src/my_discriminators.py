@@ -1,22 +1,23 @@
+
+
 def classical_sgan_disc(
         filter_size=5,
         convdims=2,
         depth=5,
         channels=1,
         clip_weights=False,
-        clipping_value=0.01):
+        clipping_value=0.01,
+        l2_fac=1e-5,
+        strides=2,
+        epsilon=1e-4,
+        convs=[64, 128, 256, 512, 1],
+        init="glorot_uniform"):
+
     from kgan.constraints import Clip
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
                               LeakyReLU, GaussianNoise)
     from keras.regularizers import l2
-    from keras.initializers import RandomNormal
-
-    l2_fac = 1e-5
-    strides = 2
-    epsilon = 1e-4
-    convs = [pow(2, i + 6) for i in range(depth - 1)] + [1]
-    init = RandomNormal(stddev=0.02)
 
     # Setup
     if convdims == 2:
