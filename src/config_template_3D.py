@@ -4,8 +4,11 @@ import sys
 import datetime
 from my_discriminators import classical_sgan_disc
 from my_generators import classical_sgan_gen
+
 from kgan.losses import *
-from kgan.optimizers import Adam
+
+from runtime.optimizers import Adam
+from runtime import RandomNormal
 
 
 def zx_to_npx(zx, gen_depth):
@@ -29,15 +32,19 @@ class Config:
         self.batch_size = 24
         self.epoch_iters = 50
         self.epochs = 50
+        self.k = 1  # Number of D updates vs G updates
+
+        # Optimizer
+        self.optimizer = Adam
+        self.lr = 1e-5  # learning rate
+        self.b1 = 0.5  # Adam momentum term
+        self.optimizer_params = {"lr": self.lr}  # {"lr": self.lr}
 
         # Data dimensions
         self.convdims = 3  # 2D or 3D convolutions
-        self.disc_depth = 5
-        self.gen_depth = 5
         self.nz = 1  # Number of channels in Z
         self.zx = 3  # Size of each spatial dimensions in Z
         self.zx_sample = 3
-        self.nc = 1  # Number of channels
         self.npx = zx_to_npx(self.zx, self.gen_depth)
 
         # Network setup
@@ -46,33 +53,33 @@ class Config:
         self.loss_disc_fake = epsilon_gan_disc_fake
         self.loss_disc_true = epsilon_gan_disc_true
         self.loss_gen = epsilon_gan_gen
-        self.clip_weights = False  # Clip the discriminator weights (cf Wasserstein GAN)
-        self.gradient_penalty = False
-        self.c = 0.01  # Clipping value
-        self.k = 1  # Number of D updates vs G updates
         self.lmbda = 10  # Gradient penalty factor
 
         self.disc_args={
-            "filter_size": 5,
-            "depth": self.disc_depth,
-            "channels": self.nc,
-            "convdims": self.convdims,
-            "clip_weights": self.clip_weights,
-            "clipping_value": self.c
+            "filter_size": 9,
+            "depth": 5,
+            "channels": 1,
+            "convdims": 3,
+            "l2_fac": 1e-5,
+            "strides": 2,
+            "epsilon": 1e-4,
+            "init": RandomNormal(stddev=0.2),
+            "convs": [pow(2, i + 6) for i in range(4)] + [1],
+            "clip_weights": False,
+            "clipping_value": 0.01
         }
 
         self.gen_args = {
             "filter_size": 5,
-            "depth": self.gen_depth,
-            "convdims": self.convdims,
-            "channels": self.nc
+            "depth": 5,
+            "channels": 1,
+            "convdims": 3,
+            "l2_fac": 1e-5,
+            "strides": 3,
+            "epsilon": 1e-4,
+            "init": RandomNormal(stddev=0.2),
+            "convs": [pow(2, i + 5) for i in range(4, 0, -1)] + [1]
         }
-
-        # Optimizer
-        self.optimizer = Adam
-        self.lr = 1e-5  # learning rate
-        self.b1 = 0.5  # Adam momentum term
-        self.optimizer_params = {"lr": self.lr}  # {"lr": self.lr}
 
 
 if __name__ == "__main__":
