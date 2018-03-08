@@ -1,22 +1,23 @@
-def classical_sgan_disc(
+
+
+def create_network(
         filter_size=5,
         convdims=2,
-        depth=5,
         channels=1,
         clip_weights=False,
-        clipping_value=0.01):
+        clipping_value=0.01,
+        l2_fac=1e-5,
+        strides=2,
+        alpha=0.2,
+        epsilon=1e-4,
+        filters=[64, 128, 256, 512, 1],
+        init="glorot_uniform"):
+
     from kgan.constraints import Clip
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
                               LeakyReLU, GaussianNoise)
     from keras.regularizers import l2
-    from keras.initializers import RandomNormal
-
-    l2_fac = 1e-5
-    strides = 2
-    epsilon = 1e-4
-    convs = [pow(2, i + 6) for i in range(depth - 1)] + [1]
-    init = RandomNormal(stddev=0.02)
 
     # Setup
     if convdims == 2:
@@ -34,7 +35,7 @@ def classical_sgan_disc(
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
     layer = Conv(
-        filters=convs[0],
+        filters=filters[0],
         kernel_size=filter_size,
         padding="same",
         strides=strides,
@@ -43,11 +44,11 @@ def classical_sgan_disc(
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first",
         kernel_constraint=W_constraint)(layer)
-    layer = LeakyReLU()(layer)
+    layer = LeakyReLU(alpha)(layer)
 
-    for l in range(1, len(convs) - 1):
+    for l in range(1, len(filters) - 1):
         conv = Conv(
-            filters=convs[l],
+            filters=filters[l],
             kernel_size=filter_size,
             padding="same",
             strides=strides,
@@ -56,11 +57,11 @@ def classical_sgan_disc(
             kernel_regularizer=l2(l2_fac),
             data_format="channels_first",
             kernel_constraint=W_constraint)(layer)
-        layer = LeakyReLU()(conv)
+        layer = LeakyReLU(alpha)(conv)
         layer = BatchNormalization(axis=1, epsilon=epsilon)(layer)
 
     D_out = Conv(
-        filters=convs[-1],
+        filters=filters[-1],
         kernel_size=filter_size,
         activation="sigmoid",
         padding="same",

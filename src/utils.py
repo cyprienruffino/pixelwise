@@ -3,40 +3,32 @@ from io import TextIOWrapper
 from config import Config
 
 
-def load_models(config, D_path, G_path, DG_path, Adv_path):
-    from kgan.gan import gan
+def load_models(config, D_path, G_path):
+    from gan import gan
     from keras.models import load_model
 
-    if D_path is not None and G_path is not None and DG_path is not None and Adv_path is not None:
+    if D_path is not None and G_path is not None:
         custom_objects = {
-            config.loss_true.__name__: config.loss_disc,
+            config.loss_disc_true.__name__: config.loss_disc_true,
+            config.loss_disc_fake.__name__: config.loss_disc_fake,
             config.loss_gen.__name__: config.loss_gen
         }
         G = load_model(G_path, custom_objects=custom_objects)
         D = load_model(D_path, custom_objects=custom_objects)
-        DG = load_model(DG_path, custom_objects=custom_objects)
-        Adv = load_model(Adv_path, custom_objects=custom_objects)
 
     else:
-        optimizer = config.optimizer(config.optimizer_params)
-
         G = config.generator(**config.gen_args)
-
         D = config.discriminator(**config.disc_args)
 
-        if config.gradient_penalty:
-            from kgan.losses import gradient_penalty
-            gp = gradient_penalty(D.input, G.input, D, G)
-            loss_disc_fake = lambda y_true, y_pred: config.loss_disc_fake(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
-            loss_disc_true = lambda y_true, y_pred: config.loss_disc_true(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
-
-        else:
-            loss_disc_fake = config.loss_disc_fake
-            loss_disc_true = config.loss_disc_true
-
-        D, G, DG, Adv = gan(D, G, loss_disc_true, loss_disc_fake, config.loss_gen, optimizer)
+    optimizer = config.optimizer(**config.optimizer_params)
+    D, G, DG, Adv = gan(D, G, config.loss_disc_true, config.loss_disc_fake, config.loss_gen, optimizer)
 
     return D, G, DG, Adv
+
+
+def save_models(D, G, checkpoints_dir, run_name, epoch):
+    G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
+    D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
 
 
 def load_config(sgancfg):
@@ -44,7 +36,7 @@ def load_config(sgancfg):
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
         with open(sgancfg, "rb") as f:
             config = pickle.load(f)
-    elif type(sgancfg) == Config:
+    elif issubclass(type(sgancfg), Config):
         config = sgancfg
     else:
         raise TypeError(

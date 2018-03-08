@@ -35,10 +35,10 @@ def save_jsons(D, G, DG, Adv, logs_dir):
 def plot_models(D, G, DG, Adv, logs_dir):
     from keras.utils import plot_model
 
-    plot_model(D, logs_dir + "/D.png")
-    plot_model(G, logs_dir + "/G.png")
-    plot_model(DG, logs_dir + "/DG.png")
-    plot_model(Adv, logs_dir + "/Adv.png")
+    plot_model(D, logs_dir + "/D.png", show_shapes=True,show_layer_names=False)
+    plot_model(G, logs_dir + "/G.png", show_shapes=True,show_layer_names=False)
+    plot_model(DG, logs_dir + "/DG.png", show_shapes=True)
+    plot_model(Adv, logs_dir + "/Adv.png", show_shapes=True)
 
 
 def plot_losses(D_losses, G_losses, logs_dir):
@@ -104,8 +104,9 @@ def tensorboard_log_losses(D_loss, G_loss, writer, epoch):
     writer.flush()
 
 
-def save_models(D, G, DG, Adv, checkpoints_dir, run_name, epoch):
-    G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
-    D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
-    DG.save(checkpoints_dir + "/" + run_name + "_DG_" + str(epoch) + ".hdf5")
-    Adv.save(checkpoints_dir + "/" + run_name + "_Adv_" + str(epoch) + ".hdf5")
+def save_summaries(D, G, DG, Adv, logs_dir):
+    with open(logs_dir + "/Dsummary.txt", 'w') as fh:
+        D.summary(print_fn=lambda x: fh.write(x + '\n'))
+
+    with open(logs_dir + "/Gsummary.txt", 'w') as fh:
+        G.summary(print_fn=lambda x: fh.write(x + '\n'))
