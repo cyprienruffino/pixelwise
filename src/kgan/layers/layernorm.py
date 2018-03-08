@@ -3,22 +3,6 @@ from keras import initializers, regularizers
 import keras.backend as K
 
 
-def to_list(x):
-    if type(x) not in [list, tuple]:
-        return [x]
-    else:
-        return list(x)
-
-
-def LN(x, gamma, beta, epsilon=1e-6, axis=-1):
-    m = K.mean(x, axis=axis, keepdims=True)
-    std = K.sqrt(K.var(x, axis=axis, keepdims=True) + epsilon)
-    x_normed = (x - m) / (std + epsilon)
-    x_normed = gamma * x_normed + beta
-
-    return x_normed
-
-
 class LayerNormalization(Layer):
     def __init__(self, axis=-1,
                  gamma_init='one', beta_init='zero',
@@ -26,7 +10,7 @@ class LayerNormalization(Layer):
                  epsilon=1e-6, **kwargs):
         super(LayerNormalization, self).__init__(**kwargs)
 
-        self.axis = to_list(axis)
+        self.axis = self.to_list(axis)
         self.gamma_init = initializers.get(gamma_init)
         self.beta_init = initializers.get(beta_init)
         self.gamma_regularizer = regularizers.get(gamma_regularizer)
@@ -34,6 +18,22 @@ class LayerNormalization(Layer):
         self.epsilon = epsilon
 
         self.supports_masking = True
+
+    @staticmethod
+    def to_list(x):
+        if type(x) not in [list, tuple]:
+            return [x]
+        else:
+            return list(x)
+
+    @staticmethod
+    def LN(x, gamma, beta, epsilon=1e-6, axis=-1):
+        m = K.mean(x, axis=axis, keepdims=True)
+        std = K.sqrt(K.var(x, axis=axis, keepdims=True) + epsilon)
+        x_normed = (x - m) / (std + epsilon)
+        x_normed = gamma * x_normed + beta
+
+        return x_normed
 
     def build(self, input_shape):
         self.input_spec = [InputSpec(shape=input_shape)]
@@ -51,7 +51,7 @@ class LayerNormalization(Layer):
         self.built = True
 
     def call(self, inputs, mask=None):
-        return LN(inputs, gamma=self.gamma, beta=self.beta,
+        return self.LN(inputs, gamma=self.gamma, beta=self.beta,
                   axis=self.axis, epsilon=self.epsilon)
 
     def get_config(self):

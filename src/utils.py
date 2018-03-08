@@ -4,7 +4,7 @@ from config import Config
 
 
 def load_models(config, D_path, G_path):
-    from kgan.gan import gan
+    from gan import gan
     from keras.models import load_model
 
     if D_path is not None and G_path is not None:

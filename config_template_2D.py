@@ -23,7 +23,7 @@ class CustomConfig(Config):
         # Training settings
         self.batch_size = 24
         self.epoch_iters = 50
-        self.epochs = 50
+        self.epochs = 500
         self.k = 1  # Number of D updates vs G updates
 
         # Optimizer

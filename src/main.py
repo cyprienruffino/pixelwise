@@ -24,7 +24,7 @@ def run():
 
     train(
         sgancfg=config,
-        data_provider=get_texture_iter(sys.argv[2], batch_size=config.batch_size, npx=config.npx),
+        data_provider=get_texture_iter(sys.argv[2]+"/", batch_size=config.batch_size, npx=config.npx),
         run_name=run_name,
         checkpoints_dir="./runs/" + run_name + "/checkpoints/",
         logs_dir="./runs/" + run_name + "/logs/",

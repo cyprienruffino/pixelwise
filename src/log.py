@@ -35,10 +35,10 @@ def save_jsons(D, G, DG, Adv, logs_dir):
 def plot_models(D, G, DG, Adv, logs_dir):
     from keras.utils import plot_model
 
-    plot_model(D, logs_dir + "/D.png")
-    plot_model(G, logs_dir + "/G.png")
-    plot_model(DG, logs_dir + "/DG.png")
-    plot_model(Adv, logs_dir + "/Adv.png")
+    plot_model(D, logs_dir + "/D.png", show_shapes=True,show_layer_names=False)
+    plot_model(G, logs_dir + "/G.png", show_shapes=True,show_layer_names=False)
+    plot_model(DG, logs_dir + "/DG.png", show_shapes=True)
+    plot_model(Adv, logs_dir + "/Adv.png", show_shapes=True)
 
 
 def plot_losses(D_losses, G_losses, logs_dir):
