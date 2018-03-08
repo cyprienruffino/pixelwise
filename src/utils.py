@@ -18,23 +18,11 @@ def load_models(config, D_path, G_path, DG_path, Adv_path):
         Adv = load_model(Adv_path, custom_objects=custom_objects)
 
     else:
-        optimizer = config.optimizer(config.optimizer_params)
-
+        optimizer = config.optimizer(**config.optimizer_params)
         G = config.generator(**config.gen_args)
-
         D = config.discriminator(**config.disc_args)
 
-        if config.gradient_penalty:
-            from kgan.losses import gradient_penalty
-            gp = gradient_penalty(D.input, G.input, D, G)
-            loss_disc_fake = lambda y_true, y_pred: config.loss_disc_fake(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
-            loss_disc_true = lambda y_true, y_pred: config.loss_disc_true(y_true, y_pred) + (config.lmbda * gp(y_true, y_pred)) / 2
-
-        else:
-            loss_disc_fake = config.loss_disc_fake
-            loss_disc_true = config.loss_disc_true
-
-        D, G, DG, Adv = gan(D, G, loss_disc_true, loss_disc_fake, config.loss_gen, optimizer)
+        D, G, DG, Adv = gan(D, G, config.loss_disc_true, config.loss_disc_fake, config.loss_gen, optimizer)
 
     return D, G, DG, Adv
 
@@ -44,7 +32,7 @@ def load_config(sgancfg):
     if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
         with open(sgancfg, "rb") as f:
             config = pickle.load(f)
-    elif type(sgancfg) == Config:
+    elif issubclass(type(sgancfg), Config):
         config = sgancfg
     else:
         raise TypeError(

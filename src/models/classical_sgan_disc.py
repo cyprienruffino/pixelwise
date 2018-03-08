@@ -1,16 +1,15 @@
 
 
-def classical_sgan_disc(
+def create_network(
         filter_size=5,
         convdims=2,
-        depth=5,
         channels=1,
         clip_weights=False,
         clipping_value=0.01,
         l2_fac=1e-5,
         strides=2,
         epsilon=1e-4,
-        convs=[64, 128, 256, 512, 1],
+        filters=[64, 128, 256, 512, 1],
         init="glorot_uniform"):
 
     from kgan.constraints import Clip
@@ -35,7 +34,7 @@ def classical_sgan_disc(
     # Discriminator
     layer = GaussianNoise(stddev=0.1)(X)
     layer = Conv(
-        filters=convs[0],
+        filters=filters[0],
         kernel_size=filter_size,
         padding="same",
         strides=strides,
@@ -46,9 +45,9 @@ def classical_sgan_disc(
         kernel_constraint=W_constraint)(layer)
     layer = LeakyReLU()(layer)
 
-    for l in range(1, len(convs) - 1):
+    for l in range(1, len(filters) - 1):
         conv = Conv(
-            filters=convs[l],
+            filters=filters[l],
             kernel_size=filter_size,
             padding="same",
             strides=strides,
@@ -61,7 +60,7 @@ def classical_sgan_disc(
         layer = BatchNormalization(axis=1, epsilon=epsilon)(layer)
 
     D_out = Conv(
-        filters=convs[-1],
+        filters=filters[-1],
         kernel_size=filter_size,
         activation="sigmoid",
         padding="same",

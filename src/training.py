@@ -1,51 +1,39 @@
-import time
-import shutil
-
-import progressbar
-
 import numpy as np
+import progressbar
 from tensorflow import set_random_seed
 
 import log
 import utils
-import time
+
 
 def sample_noise(config):
     return np.random.uniform(-1., 1., (config.batch_size, config.nz) +
-                             ((config.zx, ) * config.convdims))
+                             ((config.zx,) * config.convdims))
 
 
 def generate_sample(G, config):
     z_sample = np.random.uniform(-1., 1., (1, config.nz) +
-                                 ((config.zx_sample, ) * config.convdims))
+                                 ((config.zx_sample,) * config.convdims))
     return G.predict(z_sample)
 
 
 def train(sgancfg,
           data_provider,
-          run_name=None,
+          run_name,
           checkpoints_dir="./",
           logs_dir="./",
           samples_dir="./",
-          progress_bar=True,
           use_tensorboard=True,
           use_matplotlib=False,
           checkpoint_models=True,
           plot_models=True,
           save_json=True,
-          save_config_file=False,
           generate_png=True,
           generate_hdf5=True,
-          log_metadata=True,
           D_path=None,
           G_path=None,
           DG_path=None,
-          Adv_path=None,
-          initial_epoch=0):
-
-    if run_name is None:
-        run_name = str(time.time())
-
+          Adv_path=None):
     log.create_dirs(logs_dir, checkpoints_dir, samples_dir)
     config = utils.load_config(sgancfg)
 
@@ -79,20 +67,15 @@ def train(sgancfg,
             # We need to define a dummy array as a Keras train step need labels
             # (even if they are not used)
             dummy_Z = np.zeros(Znp.shape)
-            start = time.clock()
+
             # Training the generator
             losses = DG.train_on_batch(Znp, dummy_Z)
             G_losses.append(losses)
-            print("DG step", time.clock() - start)
-            # Training the discriminator
-            start = time.clock()
 
+            # Training the discriminator
             for _ in range(config.k):
                 samples = next(data_provider)
-                start = time.clock()
                 losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
-                print("Adv step", time.clock() - start)
-
                 D_losses.append(losses[0] + losses[1])
 
         # Epoch end, logging

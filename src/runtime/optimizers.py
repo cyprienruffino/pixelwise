@@ -1,18 +1,18 @@
-def Adam(args):
+def Adam(**kwargs):
     from keras.optimizers import Adam
-    return Adam(**args)
+    return Adam(**kwargs)
 
 
-def SGD(args):
+def SGD(**kwargs):
     from keras.optimizers import SGD
-    return SGD(**args)
+    return SGD(**kwargs)
 
 
-def RMSProp(args):
+def RMSProp(**kwargs):
     from keras.optimizers import RMSprop
-    return RMSprop(**args)
+    return RMSprop(**kwargs)
 
 
-def Adagrad(args):
+def Adagrad(**kwargs):
     from keras.optimizers import Adagrad
-    return Adagrad(**args)
+    return Adagrad(**kwargs)

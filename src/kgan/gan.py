@@ -6,7 +6,7 @@ def gan(discriminator, generator, loss_disc_true, loss_disc_fake, loss_gen, opti
 
     for layer in generator.layers:
         layer.trainable = False
-    
+
     Adv = Model(inputs=[X, Z], outputs=[discriminator(X), discriminator(generator(Z))], name="Adv")
     Adv.compile(optimizer=optimizer, loss=[loss_disc_true, loss_disc_fake])
 
