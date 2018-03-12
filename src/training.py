@@ -69,10 +69,7 @@ def train(sgancfg,
             # We need to define a dummy array as a Keras train step need labels
             # (even if they are not used)
             dummy_Z = np.zeros(Znp.shape)
-<<<<<<< HEAD
-=======
 
->>>>>>> d6910e112436ae91b01f107a52d05917b042735d
             # Training the generator
             losses = DG.train_on_batch(Znp, dummy_Z)
             G_losses.append(losses)
