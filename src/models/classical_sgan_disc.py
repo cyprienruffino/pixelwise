@@ -7,7 +7,8 @@ def create_network(
         clip_weights=False,
         clipping_value=0.01,
         l2_fac=1e-5,
-        strides=2,
+        gaussian_noise_stddev=0.1,
+        strides=[2, 2, 2, 2, 2],
         alpha=0.2,
         epsilon=1e-4,
         filters=[64, 128, 256, 512, 1],
@@ -33,12 +34,12 @@ def create_network(
     X = Input((channels,) + (None,) * convdims, name="X")
 
     # Discriminator
-    layer = GaussianNoise(stddev=0.1)(X)
+    layer = GaussianNoise(stddev=gaussian_noise_stddev)(X)
     layer = Conv(
         filters=filters[0],
         kernel_size=filter_size,
         padding="same",
-        strides=strides,
+        strides=strides[0],
         use_bias=False,
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
@@ -51,7 +52,7 @@ def create_network(
             filters=filters[l],
             kernel_size=filter_size,
             padding="same",
-            strides=strides,
+            strides=strides[l],
             use_bias=False,
             kernel_initializer=init,
             kernel_regularizer=l2(l2_fac),
@@ -65,7 +66,7 @@ def create_network(
         kernel_size=filter_size,
         activation="sigmoid",
         padding="same",
-        strides=strides,
+        strides=strides[-1],
         use_bias=False,
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
