@@ -53,7 +53,7 @@ class CustomConfig(Config):
             "channels": 1,
             "convdims": 3,
             "l2_fac": 1e-5,
-            "strides": 2,
+            "strides": [2, 2, 2, 2, 2],
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.2),
         }
@@ -66,7 +66,7 @@ class CustomConfig(Config):
             "channels": 1,
             "convdims": 3,
             "l2_fac": 1e-5,
-            "strides": 2,
+            "strides": [2, 2, 2, 2, 2],
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.2),
             "clip_weights": False,

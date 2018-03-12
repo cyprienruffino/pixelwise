@@ -37,7 +37,7 @@ class CustomConfig(Config):
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
         self.zx = 12  # Size of each spatial dimensions in Z
-        self.zx_sample = 12
+        self.zx_sample = 20
         self.npx = 384  # (zx * 2^ depth)
 
         # Network setup
@@ -52,7 +52,7 @@ class CustomConfig(Config):
             "convdims": 2,
             "channels": 1,
             "l2_fac": 1e-5,
-            "strides": 2,
+            "strides": [2, 2, 2, 2, 2],
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.2)
         }
@@ -66,7 +66,7 @@ class CustomConfig(Config):
             "clip_weights": False,
             "clipping_value": 0.01,
             "l2_fac": 1e-5,
-            "strides": 2,
+            "strides": [2, 2, 2, 2, 2],
             "alpha": 0.2,
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.2)
