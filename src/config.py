@@ -1,20 +1,5 @@
-import hashlib
-
-import models.classical_sgan_disc
-import models.classical_sgan_gen
-
-from kgan.losses import *
-
-from runtime.initializers import RandomNormal
-from runtime.optimizers import Adam
-
-from config import Config
-
-
-class CustomConfig(Config):
+class Config:
     def __init__(self, name):
-        super().__init__(name)
-
         # Run metadata
         self.name = name
         self.seed = None
