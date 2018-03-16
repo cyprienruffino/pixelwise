@@ -76,6 +76,7 @@ def train(sgancfg,
 
             # Training the discriminator
             for _ in range(config.k):
+                Znp = sample_noise(config)
                 samples = next(data_provider)
                 losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
                 D_losses.append(losses[0] + losses[1])

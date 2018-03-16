@@ -1,5 +1,3 @@
-
-
 def create_network(
         filter_size=5,
         convdims=2,
@@ -18,6 +16,7 @@ def create_network(
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
                               LeakyReLU, GaussianNoise)
+    from keras.initializers import RandomNormal
     from keras.regularizers import l2
 
     # Setup
@@ -31,7 +30,7 @@ def create_network(
     else:
         W_constraint = None
 
-    X = Input((channels,) + (None,) * convdims, name="X")
+    X = Input((channels,) + (None, ) * convdims, name="X")
 
     # Discriminator
     layer = GaussianNoise(stddev=gaussian_noise_stddev)(X)
@@ -59,7 +58,7 @@ def create_network(
             data_format="channels_first",
             kernel_constraint=W_constraint)(layer)
         layer = LeakyReLU(alpha)(conv)
-        layer = BatchNormalization(axis=1, epsilon=epsilon)(layer)
+        layer = BatchNormalization(axis=1, epsilon=epsilon, gamma_initializer=RandomNormal(mean=1, stddev=0.02))(layer)
 
     D_out = Conv(
         filters=filters[-1],

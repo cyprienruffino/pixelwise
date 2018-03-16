@@ -54,7 +54,7 @@ class CustomConfig(Config):
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
             "epsilon": 1e-4,
-            "init": RandomNormal(stddev=0.2)
+            "init": RandomNormal(stddev=0.02)
         }
 
         self.discriminator = models.classical_sgan_disc.create_network
@@ -64,10 +64,9 @@ class CustomConfig(Config):
             "channels": 1,
             "convdims": 2,
             "clip_weights": False,
-            "clipping_value": 0.01,
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
             "alpha": 0.2,
             "epsilon": 1e-4,
-            "init": RandomNormal(stddev=0.2)
+            "init": RandomNormal(stddev=0.02)
         }

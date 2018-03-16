@@ -11,8 +11,9 @@ def create_network(
         filters=[512, 256, 128, 64, 1]):
     from keras.engine import Model
     from keras.layers import (BatchNormalization, Conv2DTranspose,
-                              Conv3DTranspose, Input)
+                              Conv3DTranspose, Input, LeakyReLU)
     from keras.regularizers import l2
+    from keras.initializers import RandomNormal
 
     if convdims == 2:
         ConvTranspose = Conv2DTranspose
@@ -33,7 +34,7 @@ def create_network(
             kernel_regularizer=l2(l2_fac),
             activation="relu",
             data_format="channels_first")(layer)
-        layer = BatchNormalization(axis=1, epsilon=epsilon)(layer)
+        layer = BatchNormalization(axis=1, epsilon=epsilon, gamma_initializer=RandomNormal(mean=1, stddev=0.02))(layer)
 
     G_out = ConvTranspose(
         filters=filters[-1],
