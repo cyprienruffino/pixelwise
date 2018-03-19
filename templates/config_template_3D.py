@@ -22,14 +22,14 @@ class CustomConfig(Config):
 
         # Training settings
         self.batch_size = 24
-        self.epoch_iters = 50
+        self.epoch_iters = 100
         self.epochs = 50
         self.k = 1  # Number of D updates vs G updates
 
         # Optimizer
         self.optimizer = Adam
         self.optimizer_params = {
-            "lr": 2e-4,
+            "lr": 5e-4,
             "beta_1": 0.5
         }
 
@@ -37,7 +37,7 @@ class CustomConfig(Config):
         self.convdims = 3  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
         self.zx = 3  # Size of each spatial dimensions in Z
-        self.zx_sample = 3
+        self.zx_sample = 4
         self.npx = 96  # zx * 2^depth
 
         # Network setup
@@ -49,7 +49,6 @@ class CustomConfig(Config):
         self.gen_args = {
             "filter_size": 5,
             "filters": [pow(2, i + 5) for i in range(4, 0, -1)] + [1],
-            "depth": 5,
             "channels": 1,
             "convdims": 3,
             "l2_fac": 1e-5,
@@ -60,9 +59,8 @@ class CustomConfig(Config):
 
         self.discriminator = models.classical_sgan_disc.create_network
         self.disc_args={
-            "filter_size": 9,
+            "filter_size": 5,
             "filters": [pow(2, i + 6) for i in range(4)] + [1],
-            "depth": 5,
             "channels": 1,
             "convdims": 3,
             "l2_fac": 1e-5,

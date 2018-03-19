@@ -21,9 +21,9 @@ class CustomConfig(Config):
                 10 ** 8)
 
         # Training settings
-        self.batch_size = 24
-        self.epoch_iters = 50
-        self.epochs = 500
+        self.batch_size = 64
+        self.epoch_iters = 100
+        self.epochs = 50
         self.k = 1  # Number of D updates vs G updates
 
         # Optimizer
@@ -36,9 +36,9 @@ class CustomConfig(Config):
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
-        self.zx = 12  # Size of each spatial dimensions in Z
-        self.zx_sample = 20
-        self.npx = 384  # (zx * 2^ depth)
+        self.zx = 11  # Size of each spatial dimensions in Z
+        self.zx_sample = 19
+        self.npx = 352  # (zx * 2^ depth)
 
         # Network setup
         self.loss_disc_fake = gan_disc_fake
