@@ -1,45 +1,23 @@
-import pickle
-import time
+import sys
 import h5py
-
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from scipy.signal import medfilt
-from io import TextIOWrapper
+from keras.models import load_model
 
 
 def generate(generator,
-             sgancfg,
+             nz, zx, convdims,
              samples=1,
              filtering=True,
              threshold=True,
              tricatti=True):
 
-    if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
-        with open(sgancfg, "rb") as f:
-            config = pickle.load(f)
-    elif type(sgancfg) == Config:
-        config = sgancfg
-    else:
-        raise TypeError(
-            "sgancfg : unknown type. Must pass a path as a string, an opened file or a Config object"
-        )
-
-    # Seeding the random numbers generators
-    np.random.seed = config.seed
-
-    from keras.models import load_model  # The seed must be set before importing Keras
-
-    # Loading the model
-    generator = load_model(generator)
-
-    t_start = time.time()
-    z_sample1 = np.random.uniform(-1., 1., (samples, config.nz) +
-                                  (config.zx_sample, ) * config.convdims)
+    z_sample1 = np.random.uniform(-1., 1., (samples, nz) +
+                                  (zx, ) * convdims)
 
     # Making the prediction
-    model = generator.predict(z_sample1)[:, 0, :, :]
+    model = generator.predict(z_sample1)
 
     model = (model + 1) * 0.5  # Convert from [-1,1] to [0,1]
 
@@ -63,12 +41,25 @@ def generate(generator,
         model[np.where((model > 0) & (model < 2))] = 1
         model = model / 2.0
 
-    print('elapsed_time is: ', time.time() - t_start)
+    return model
+
+
+def main():
+    generator = load_model(sys.argv[1])
+    zx = 20
+    convdims = 2
+    nz = 1
+    model = generate(generator, nz, zx, convdims, samples=10)
+
     plt.figure(figsize=(8, 8))
     plt.imshow(model[0, :, :], cmap='gray')
 
-    h5_filename = "2D_Gen_" + '_' + str(config.zx)
+    h5_filename = "2D_Gen_" + '_' + str(zx)
     f = h5py.File(h5_filename + '.hdf5', mode='w')
     f.create_dataset('features', data=model)
     f.flush()
     f.close()
+
+
+if __name__ == "__main__":
+    main()
