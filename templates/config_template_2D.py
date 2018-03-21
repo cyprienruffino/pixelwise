@@ -9,6 +9,7 @@ from runtime.initializers import RandomNormal
 from runtime.optimizers import Adam
 
 from config import Config
+from datasets import data_io2D
 
 
 class CustomConfig(Config):
@@ -69,4 +70,13 @@ class CustomConfig(Config):
             "alpha": 0.2,
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.02)
+        }
+
+        self.data_generator = data_io2D.get_texture_iter
+        self.data_gen_args = {
+            'npx': self.npx,
+            "batch_size": self.batch_size,
+            "filter": None,
+            "mirror": True,
+            "n_channel": self.nz,
         }

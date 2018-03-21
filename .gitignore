@@ -12,12 +12,14 @@ runs
 ti_2D
 ti_3D
 
-*.png
 *.hdf5
 *.sgancfg
 *.sgan
 *.txt
 *.pyc
+*.log
+*.aux
+*.synctex.gz
 
 notebook.py
 test.py

@@ -31,3 +31,7 @@ class Config:
 
         self.discriminator = None
         self.disc_args = {}
+
+        self.data_generator = None
+        self.data_gen_args = {}
+

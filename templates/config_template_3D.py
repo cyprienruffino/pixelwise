@@ -4,6 +4,7 @@ import models.classical_sgan_disc
 import models.classical_sgan_gen
 
 from config import Config
+from datasets import data_io3D
 
 from kgan.losses import *
 
@@ -69,4 +70,13 @@ class CustomConfig(Config):
             "init": RandomNormal(stddev=0.02),
             "clip_weights": False,
             "clipping_value": 0.01
+        }
+
+        self.data_generator = data_io3D.get_texture_iter
+        self.data_gen_args = {
+            'npx': self.npx,
+            "batch_size": self.batch_size,
+            "filter": None,
+            "mirror": True,
+            "n_channel": self.nz,
         }
