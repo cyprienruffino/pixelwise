@@ -1,0 +1,5 @@
+from models import classical_sgan_gen
+from models import classical_sgan_disc
+from models import conditional_disc
+from models import dilation_only_gen
+from models import upscaling_dilation_gen
