@@ -83,5 +83,20 @@ def save_tensor(tensor, filename):
     img.save(filename)
 
 
+def disc_data_provider(folder, zx, npx=128, batch_size=64, \
+                     filter=None, mirror=True, n_channel=1, convdims=21):
+    folder = folder + "/"
+    generator = get_texture_iter(folder, npx, batch_size, filter, mirror, n_channel)
+    while True:
+        batch = next(generator)
+
+        yield batch
+
+
+def gen_data_provider(_, batch_size, zx, n_channel=1, convdims=2):
+    while True:
+        yield np.random.uniform(-1., 1., (batch_size, n_channel) + ((zx,) * convdims))
+
+
 if __name__ == "__main__":
     print("nothing here.")

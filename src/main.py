@@ -28,7 +28,8 @@ def run():
 
     train(
         sgancfg=config,
-        data_provider=config.data_generator(sys.argv[2], **config.data_gen_args),
+        disc_data_provider=config.disc_data_provider(sys.argv[2], **config.disc_data_provider_args),
+        gen_data_provider=config.gen_data_provider(sys.argv[2], **config.gen_data_provider_args),
         run_name=run_name,
         checkpoints_dir="./runs/" + run_name + "/checkpoints/",
         logs_dir="./runs/" + run_name + "/logs/",

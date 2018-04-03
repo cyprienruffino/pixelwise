@@ -1,16 +1,31 @@
 import numpy as np
 from scipy.stats import bernoulli
 
-from datasets.data_io2D import get_texture_iter as generator2D
+from datasets import data_io2D
 
 
-def get_texture_iter(folder, npx=128, batch_size=64, \
-                     filter=None, mirror=True, n_channel=1, constraints_ratio=0.1):
+def get_noise(batch_size, zx, nz, convdims):
+        return np.random.uniform(-1., 1., (batch_size, nz) + ((zx,) * convdims))
 
-    generator = generator2D(folder, npx, batch_size, filter, mirror, n_channel)
 
+def get_constraints(batch, constraints_ratio=0.1):
+    masks = bernoulli.rvs(constraints_ratio, size=batch.size).reshape(batch.shape)
+    return batch * masks
+
+
+def gen_data_provider(folder, batch_size, npx, zx, convdims=2, constraints_ratio=0.1, filter=False, mirror=True, n_channel=1):
+    generator = data_io2D.get_texture_iter(folder + "/", npx, batch_size, filter, mirror, n_channel)
     while True:
-        batch = next(generator)
-        masks = bernoulli.rvs(constraints_ratio, size=np.prod(batch.shape)[0]).reshape(batch.shape)
+        data = next(generator)
+        noise = get_noise(batch_size, zx, n_channel, convdims)
+        constraints = get_constraints(data, constraints_ratio)
+        yield [noise, constraints]
 
-        yield [batch, batch*masks]
+
+def disc_data_provider(folder, batch_size, npx, zx, convdims=2, constraints_ratio=0.1, filter=False, mirror=True, n_channel=1):
+    generator = data_io2D.get_texture_iter(folder + "/", npx, batch_size, filter, mirror, n_channel)
+    while True:
+        data = next(generator)
+        noise = get_noise(batch_size, zx, n_channel, convdims)
+        constraints = get_constraints(data, constraints_ratio)
+        yield [data, constraints]

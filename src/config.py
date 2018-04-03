@@ -10,10 +10,6 @@ class Config:
         self.epochs = None
         self.k = None  # Number of D updates vs G updates
 
-        # Optimizer
-        self.optimizer = None
-        self.optimizer_params = {}
-
         # Data dimensions
         self.convdims = None  # 2D or 3D convolutions
         self.nz = None  # Number of channels in Z
@@ -21,17 +17,30 @@ class Config:
         self.zx_sample = None
         self.npx = None  # (zx * 2^ depth)
 
-        # Network setup
-        self.loss_disc_fake = None
-        self.loss_disc_true = None
-        self.loss_gen = None
-
+        # Networks
         self.generator = None
         self.gen_args = {}
 
         self.discriminator = None
         self.disc_args = {}
 
-        self.data_generator = None
-        self.data_gen_args = {}
+        # Losses
+        self.loss_disc_fake = None
+        self.loss_disc_true = None
+        self.loss_gen = None
+
+        # Optimizers
+        self.gen_optimizer = None
+        self.gen_optimizer_args = None
+
+        self.disc_optimizer = None
+        self.disc_optimizer_args = None
+
+        # Data providers
+        self.disc_data_provider = None
+        self.disc_data_provider_args = {}
+
+        self.gen_data_provider = None
+        self.gen_data_provider_args = {}
+
 

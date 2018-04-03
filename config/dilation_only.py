@@ -20,14 +20,19 @@ class CustomConfig(Config):
                 10 ** 8)
 
         # Training settings
-        self.batch_size = 24
+        self.batch_size = 2
         self.epoch_iters = 50
-        self.epochs = 500
+        self.epochs = 150
         self.k = 1  # Number of D updates vs G updates
 
-        # Optimizer
-        self.optimizer = Adam
-        self.optimizer_params = {
+        # Optimizers
+        self.disc_optimizer = Adam
+        self.disc_optimizer_args = {
+            "lr": 0.0005,
+            "beta_1": 0.5
+        }
+        self.gen_optimizer = Adam
+        self.gen_optimizer_args = {
             "lr": 0.0005,
             "beta_1": 0.5
         }
@@ -35,8 +40,8 @@ class CustomConfig(Config):
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
-        self.zx = 12  # Size of each spatial dimensions in Z
-        self.zx_sample = 20
+        self.zx = 384  # Size of each spatial dimensions in Z
+        self.zx_sample = 384
         self.npx = 384  # (zx * 2^ depth)
 
         # Network setup
@@ -44,19 +49,21 @@ class CustomConfig(Config):
         self.loss_disc_true = gan_disc_true
         self.loss_gen = gan_gen
 
-        self.generator = models.dilation_only_gen.create_network
+        self.generator = applications.dilation_only_gen.create_network
         self.gen_args = {
             "filter_size": 5,
             "convdims": 2,
             "channels": 1,
             "l2_fac": 1e-5,
-            "filters": [64, 64, 128, 128, 256, 256, 512, 1],
-            "dilations": [1, 2, 2, 3, 3, 4, 1],
+            "filters": [64, 64, 128, 128, 256, 256, 256, 512, 1],
+            # "filters": [512, 256, 256, 128, 128,  64, 64, 1],
+            # "dilations": [8, 7, 6, 5, 4, 3, 2, 1],
+            "dilations": [1, 2, 3, 4, 5, 6, 7, 8],
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.02)
         }
 
-        self.discriminator = models.conditional_disc.create_network
+        self.discriminator = applications.classical_sgan_disc.create_network
         self.disc_args = {
             "filter_size": 9,
             "filters": [64, 128, 256, 512, 1],
@@ -69,11 +76,19 @@ class CustomConfig(Config):
             "init": RandomNormal(stddev=0.02)
         }
 
-        self.data_generator = constrained_data_io2D.get_texture_iter
-        self.data_gen_args = {
+        self.disc_data_provider = data_io2D.disc_data_provider
+        self.disc_data_provider_args = {
+            "zx": self.zx,
             'npx': self.npx,
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
+            "n_channel": self.nz,
+        }
+
+        self.gen_data_provider = data_io2D.gen_data_provider
+        self.gen_data_provider_args = {
+            "zx": self.zx,
+            "batch_size": self.batch_size,
             "n_channel": self.nz,
         }

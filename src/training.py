@@ -5,21 +5,10 @@ from tensorflow import set_random_seed
 import utils
 
 
-
-def sample_noise(config):
-    return np.random.uniform(-1., 1., (config.batch_size, config.nz) +
-                             ((config.zx,) * config.convdims))
-
-
-def generate_sample(G, config):
-    z_sample = np.random.uniform(-1., 1., (1, config.nz) +
-                                 ((config.zx_sample,) * config.convdims))
-    return G.predict(z_sample)
-
-
 def train(sgancfg,
-          data_provider,
           run_name,
+          disc_data_provider,
+          gen_data_provider,
           checkpoints_dir="./",
           logs_dir="./",
           samples_dir="./",
@@ -62,10 +51,10 @@ def train(sgancfg,
         G_losses = []
         D_losses = []
         for _ in bar(range(iters)):
-            Znp = sample_noise(config)
+            Znp = next(gen_data_provider)
 
-            # We need to define a dummy array as a Keras train step need labels
-            # (even if they are not used)
+        # We need to define a dummy array as a Keras train step need labels
+        # (even if they are not used)
             dummy_Z = np.zeros(Znp.shape)
 
             # Training the generator
@@ -74,8 +63,8 @@ def train(sgancfg,
 
             # Training the discriminator
             for _ in range(config.k):
-                Znp = sample_noise(config)
-                samples = next(data_provider)
+                Znp =  next(gen_data_provider)
+                samples = next(disc_data_provider)
                 losses = Adv.train_on_batch([samples, Znp], [dummy_Z, dummy_Z])
                 D_losses.append(losses[0] + losses[1])
 
@@ -85,7 +74,9 @@ def train(sgancfg,
         G_losses_history.append(G_loss)
         D_losses_history.append(D_loss)
 
-        if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
+        if generate_png or generate_hdf5 or use_tensorboard:
+            Znp = next(gen_data_provider)
+            data = G.predict(Znp)
 
         if config.convdims == 2:
             if generate_png: utils.gen_png(data, samples_dir, run_name, epoch)
