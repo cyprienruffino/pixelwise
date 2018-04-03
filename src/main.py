@@ -2,16 +2,19 @@ import datetime
 import importlib.util
 import os
 import sys
-
+import shutil
 from training import train
 
 
 def run():
     if len(sys.argv) < 3:
-        print("Usage : python main.py path_to_config_file path_to_image_folder")
+        print("Usage : python main.py path_to_config_file path_to_image_folder [run_name]")
         exit(1)
 
-    run_name = str(datetime.datetime.now())
+    if len(sys.argv) > 3:
+        run_name = sys.argv[3]
+    else:
+        run_name = str(datetime.datetime.now())
     print(run_name)
     os.mkdir("./runs/" + run_name)
 
@@ -20,6 +23,8 @@ def run():
 
     spec.loader.exec_module(config_module)
     config = config_module.CustomConfig(run_name)
+
+    shutil.copy2(sys.argv[1], './runs/' + run_name + "/config.py")
 
     train(
         sgancfg=config,
