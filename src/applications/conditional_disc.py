@@ -1,9 +1,14 @@
+from keras.layers import concatenate, Conv2D
+from keras.engine import Model
+from keras.layers import (BatchNormalization, Input,
+                          LeakyReLU, GaussianNoise)
+from keras.initializers import RandomNormal
+from keras.regularizers import l2
+
 def create_network(
         filter_size=5,
         convdims=2,
         channels=1,
-        clip_weights=False,
-        clipping_value=0.01,
         l2_fac=1e-5,
         gaussian_noise_stddev=0.1,
         strides=[2, 2, 2, 2, 2],
@@ -12,42 +17,27 @@ def create_network(
         filters=[64, 128, 256, 512, 1],
         init="glorot_uniform"):
 
-    from kgan.constraints import Clip
-    from keras.engine import Model
-    from keras.layers import (BatchNormalization, Conv2D, Conv3D, Input,
-                              LeakyReLU, GaussianNoise)
-    from keras.initializers import RandomNormal
-    from keras.regularizers import l2
 
-    # Setup
-    if convdims == 2:
-        Conv = Conv2D
-    elif convdims == 3:
-        Conv = Conv3D
+    X = Input((channels,) + (None,) * convdims, name="X")
+    C = Input((channels,) + (None,) * convdims, name="C_D")
 
-    if clip_weights:
-        W_constraint = Clip(clipping_value)
-    else:
-        W_constraint = None
-
-    X = Input((channels,) + (None, ) * convdims, name="X")
+    layer = concatenate([X, C], axis=1)
 
     # Discriminator
-    layer = GaussianNoise(stddev=gaussian_noise_stddev)(X)
-    layer = Conv(
+    layer = GaussianNoise(stddev=gaussian_noise_stddev)(layer)
+    layer = Conv2D(
         filters=filters[0],
         kernel_size=filter_size,
         padding="same",
-        strides=strides[0],
+        strides=2,
         use_bias=False,
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
-        data_format="channels_first",
-        kernel_constraint=W_constraint)(layer)
+        data_format="channels_first")(layer)
     layer = LeakyReLU(alpha)(layer)
 
     for l in range(1, len(filters) - 1):
-        conv = Conv(
+        conv = Conv2D(
             filters=filters[l],
             kernel_size=filter_size,
             padding="same",
@@ -55,12 +45,11 @@ def create_network(
             use_bias=False,
             kernel_initializer=init,
             kernel_regularizer=l2(l2_fac),
-            data_format="channels_first",
-            kernel_constraint=W_constraint)(layer)
+            data_format="channels_first")(layer)
         layer = LeakyReLU(alpha)(conv)
         layer = BatchNormalization(axis=1, epsilon=epsilon, gamma_initializer=RandomNormal(mean=1, stddev=0.02))(layer)
 
-    D_out = Conv(
+    D_out = Conv2D(
         filters=filters[-1],
         kernel_size=filter_size,
         activation="sigmoid",
@@ -69,7 +58,6 @@ def create_network(
         use_bias=False,
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
-        data_format="channels_first",
-        kernel_constraint=W_constraint)(layer)
+        data_format="channels_first")(layer)
 
-    return Model(inputs=X, outputs=D_out, name="D")
+    return Model(inputs=[X, C], outputs=D_out)

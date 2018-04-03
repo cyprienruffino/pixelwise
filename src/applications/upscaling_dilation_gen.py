@@ -20,7 +20,6 @@ def create_network(
 
     # Generator
     Z = Input((channels, ) + (None, ) * convdims, name="Z")
-    C = Input((channels,) + (None,) * convdims, name="C")
     layer = Z
 
     for l in range(len(upscaling_filters) - 1):
@@ -40,12 +39,10 @@ def create_network(
         kernel_size=filter_size,
         padding="same",
         strides=strides[-1],
-        activation="tanh",
+        activation="relu",
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first")(layer)
-
-    layer = concatenate([layer, C], axis=1)
 
     # Dilation
     for l in range(len(dilations_filters) - 1):
@@ -53,7 +50,7 @@ def create_network(
             filters=dilations_filters[l],
             kernel_size=filter_size,
             padding="same",
-            dilation=dilations[l],
+            dilation_rate=dilations[l],
             activation="relu",
             kernel_initializer=init,
             kernel_regularizer=l2(l2_fac),
@@ -63,9 +60,9 @@ def create_network(
     G_out = Conv2D(
         filters=dilations_filters[-1],
         kernel_size=filter_size,
-        activation="sigmoid",
+        activation="tanh",
         padding="same",
-        dilation=dilations[-1],
+        dilation_rate=dilations[-1],
         kernel_initializer=init,
         kernel_regularizer=l2(l2_fac),
         data_format="channels_first")(layer)

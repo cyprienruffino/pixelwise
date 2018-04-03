@@ -1,14 +1,13 @@
 import hashlib
 
-import models
+import numpy as np
 
-from kgan.losses import *
-
-from runtime.initializers import RandomNormal
-from runtime.optimizers import Adam
-
+import applications
 from config import Config
 from datasets import data_io2D
+from losses import *
+from runtime.initializers import RandomNormal
+from runtime.optimizers import Adam
 
 
 class CustomConfig(Config):

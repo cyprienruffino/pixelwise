@@ -1,7 +1,3 @@
-import pickle
-from io import TextIOWrapper
-from config import Config
-
 
 def load_models(config, D_path, G_path):
     from gan import gan
@@ -20,8 +16,10 @@ def load_models(config, D_path, G_path):
         G = config.generator(**config.gen_args)
         D = config.discriminator(**config.disc_args)
 
-    optimizer = config.optimizer(**config.optimizer_params)
-    D, G, DG, Adv = gan(D, G, config.loss_disc_true, config.loss_disc_fake, config.loss_gen, optimizer)
+    D_optimizer = config.disc_optimizer(**config.disc_optimizer_args)
+    G_optimizer = config.gen_optimizer(**config.gen_optimizer_args)
+
+    D, G, DG, Adv = gan(D, G, config.loss_disc_true, config.loss_disc_fake, config.loss_gen, D_optimizer, G_optimizer)
 
     return D, G, DG, Adv
 
@@ -29,17 +27,3 @@ def load_models(config, D_path, G_path):
 def save_models(D, G, checkpoints_dir, run_name, epoch):
     G.save(checkpoints_dir + "/" + run_name + "_G_" + str(epoch) + ".hdf5")
     D.save(checkpoints_dir + "/" + run_name + "_D_" + str(epoch) + ".hdf5")
-
-
-def load_config(sgancfg):
-    # Loading the config file
-    if type(sgancfg) == str or type(sgancfg) == TextIOWrapper:
-        with open(sgancfg, "rb") as f:
-            config = pickle.load(f)
-    elif issubclass(type(sgancfg), Config):
-        config = sgancfg
-    else:
-        raise TypeError(
-            "sgancfg : unknown type. Must pass a path as a string, an opened file or a Config object"
-        )
-    return config

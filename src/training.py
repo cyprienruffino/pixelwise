@@ -2,7 +2,6 @@ import numpy as np
 import progressbar
 from tensorflow import set_random_seed
 
-import log
 import utils
 
 
@@ -34,8 +33,7 @@ def train(sgancfg,
           save_summaries=True,
           D_path=None,
           G_path=None):
-
-    log.create_dirs(logs_dir, checkpoints_dir, samples_dir)
+    utils.create_dirs(logs_dir, checkpoints_dir, samples_dir)
     config = utils.load_config(sgancfg)
 
     # Seeding the random numbers generators
@@ -47,11 +45,11 @@ def train(sgancfg,
 
     # Setting up the TensorBoard logger
     if use_tensorboard:
-        writer = log.setup_tensorboard(logs_dir, run_name)
+        writer = utils.setup_tensorboard(logs_dir, run_name)
 
-    if plot_models: log.plot_models(D, G, DG, Adv, logs_dir)
-    if save_summaries: log.save_summaries(D, G, DG, Adv, logs_dir)
-    if save_json: log.save_jsons(D, G, DG, Adv, logs_dir)
+    if plot_models: utils.plot_models(D, G, DG, Adv, logs_dir)
+    if save_summaries: utils.save_summaries(D, G, DG, Adv, logs_dir)
+    if save_json: utils.save_jsons(D, G, DG, Adv, logs_dir)
 
     # Do the actual training
     G_losses_history = []
@@ -90,13 +88,13 @@ def train(sgancfg,
         if generate_png or generate_hdf5 or use_tensorboard: data = generate_sample(G, config)
 
         if config.convdims == 2:
-            if generate_png: log.gen_png(data, samples_dir, run_name, epoch)
-            if use_tensorboard: log.tensorboard_log_image(data, writer, epoch)
+            if generate_png: utils.gen_png(data, samples_dir, run_name, epoch)
+            if use_tensorboard: utils.tensorboard_log_image(data, writer, epoch)
 
-        if generate_hdf5: log.gen_hdf5(data, samples_dir, run_name, epoch)
-        if use_tensorboard: log.tensorboard_log_losses(D_loss, G_loss, writer, epoch)
+        if generate_hdf5: utils.gen_hdf5(data, samples_dir, run_name, epoch)
+        if use_tensorboard: utils.tensorboard_log_losses(D_loss, G_loss, writer, epoch)
         if checkpoint_models: utils.save_models(D, G, checkpoints_dir, run_name, epoch)
 
     # Run end
     if use_tensorboard: writer.close()
-    if use_matplotlib: log.plot_losses(D_losses_history, G_losses_history, run_name)
+    if use_matplotlib: utils.plot_losses(D_losses_history, G_losses_history, run_name)

@@ -1,18 +1,19 @@
 import hashlib
 
-import models.classical_sgan_disc
-import models.classical_sgan_gen
+import applications.classical_sgan_disc
+import applications.classical_sgan_gen
 
 from config import Config
 from datasets import data_io3D
 
-from kgan.losses import *
+from losses import *
 
 from runtime.initializers import RandomNormal
 from runtime.optimizers import Adam
 
 
 class CustomConfig(Config):
+
     def __init__(self, name):
         super().__init__(name)
 

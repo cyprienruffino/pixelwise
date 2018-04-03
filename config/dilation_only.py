@@ -1,17 +1,16 @@
 import hashlib
-import models.dilation_only_gen
-import models.conditional_disc
-from datasets import constrained_data_io2D
 
-from kgan.losses import *
-
+import applications.conditional_dilation_only_gen
+import applications.conditional_disc
+from config import Config
+from datasets import data_io2D
+from losses import *
 from runtime.initializers import RandomNormal
 from runtime.optimizers import Adam
 
-from config import Config
-
 
 class CustomConfig(Config):
+
     def __init__(self, name):
         super().__init__(name)
 

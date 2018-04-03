@@ -1,9 +1,9 @@
 import hashlib
 
-import models.classical_sgan_disc
-import models.classical_sgan_gen
+import applications.classical_sgan_disc
+import applications.classical_sgan_gen
 
-from kgan.losses import *
+from losses import *
 
 from runtime.initializers import RandomNormal
 from runtime.optimizers import Adam
