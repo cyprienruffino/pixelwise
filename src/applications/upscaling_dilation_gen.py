@@ -22,8 +22,15 @@ def create_network(
     Z = Input((channels, ) + (None, ) * convdims, name="Z")
     layer = Z
 
+    if convdims == 2:
+        ConvTranspose = Conv2DTranspose
+        Conv = Conv2D
+    elif convdims == 3:
+        ConvTranspose = Conv3DTranspose
+        Conv = Conv3D
+
     for l in range(len(upscaling_filters) - 1):
-        layer = Conv2DTranspose(
+        layer = ConvTranspose(
             filters=upscaling_filters[l],
             kernel_size=filter_size,
             padding="same",
@@ -34,7 +41,7 @@ def create_network(
             data_format="channels_first")(layer)
         layer = BatchNormalization(axis=1, epsilon=epsilon, gamma_initializer=RandomNormal(mean=1, stddev=0.02))(layer)
 
-    layer = Conv2DTranspose(
+    layer = ConvTranspose(
         filters=upscaling_filters[-1],
         kernel_size=filter_size,
         padding="same",
@@ -46,7 +53,7 @@ def create_network(
 
     # Dilation
     for l in range(len(dilations_filters) - 1):
-        layer = Conv2D(
+        layer = Conv(
             filters=dilations_filters[l],
             kernel_size=filter_size,
             padding="same",
@@ -57,7 +64,7 @@ def create_network(
             data_format="channels_first")(layer)
         layer = BatchNormalization(axis=1, epsilon=epsilon, gamma_initializer=RandomNormal(mean=1, stddev=0.02))(layer)
 
-    G_out = Conv2D(
+    G_out = Conv(
         filters=dilations_filters[-1],
         kernel_size=filter_size,
         activation="tanh",
