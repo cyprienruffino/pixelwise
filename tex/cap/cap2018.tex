@@ -1,0 +1,189 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[width=17cm,height=22cm]{geometry}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage{authblk}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Théorème}
+
+\bibliographystyle{alpha}
+
+\title{Exemple d'article au format CAp'2018}
+\author[1]{Auteur A\thanks{Si vraiment vous voulez mettre votre email
+    ou page web...: A.A@univ-x.fr}}
+\author[2]{Auteur B}
+\affil[1]{Université X, CNRS}
+\affil[2]{Université Y, CNRS et INRIA}
+
+\renewcommand\Authands{, et }
+\renewcommand\Authand{ et }
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Ce style est très simple. Vous pouvez ajouter des mots-clef sous le
+  résumé. Le nombre de pages est limité à 10. 
+\end{abstract}
+
+\medskip
+
+\noindent\textbf{Mots-clef}: Style, \LaTeX, CAP.
+
+\section{L'entête}
+\label{sec:lentete}
+
+Rien de spécial. Ajoutez l'option \texttt{twocolumn} à la classe
+\texttt{article}. Le paquet \texttt{geometry} permet facilement de
+régler les tailles de papier:
+
+\begin{Verbatim}
+\documentclass[twocolumn]{article}
+\usepackage[width=17cm,height=24cm]{geometry}
+\end{Verbatim}
+
+Pour les affiliations, vous pouvez utiliser
+\href{http://ctan.org/pkg/authblk}{le paquet \texttt{authblk}}.
+
+
+Et évidemment, vous ajoutez ensuite les paquets que vous voulez
+utiliser, les macros les définitions de théorèmes etc... Nous
+recommandons le paquet \texttt{hyperref} puisque les documents
+\texttt{PDF} seront en ligne si vous avez donné votre accord.
+
+\begin{Verbatim}
+  \usepackage[french]{babel}
+  \usepackage[utf8]{inputenc}
+  \usepackage{fancyvrb}
+  \usepackage{authblk}
+  \usepackage{amsfonts} 
+  \usepackage{amssymb}
+  \usepackage{amsthm,amsmath} 
+  \usepackage{hyperref}
+\end{Verbatim}
+
+\begin{Verbatim}
+  \newtheorem{definition}{Définition} 
+  \newtheorem{theorem}{Théorème}
+  \newtheorem{lemma}{Lemme} 
+  \newtheorem{proposition}{Proposition}
+  \newtheorem{corollary}{Corollaire}
+\end{Verbatim}
+
+\section{Le corps}
+\label{sec:le-corps}
+
+\begin{theorem}
+  Ceci est un beau théorème.
+\end{theorem}
+
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+
+
+\section{Les figures}
+\label{sec:les-figures}
+Utilisez les formes avec \texttt{*} pour mettre une table ou figure
+sur deux colonnes (voir la table~\ref{tab:tab} ou la
+figure~\ref{fig:code}). Bien sûr les formes sans étoile restent
+utlisables pour une seule colonne comme dans la table~\ref{tab:tabcol}.
+
+\begin{table*}[htbp]
+  \centering
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Colonne 1} & \textbf{Colonne 2} & \textbf{Colonne 3} &
+    \textbf{Colonne 4} \\ \hline
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ 
+    1 & 2 & 3 & 4 \\ \hline
+  \end{tabular}
+  \caption{Une grande table}
+  \label{tab:tab}
+\end{table*}
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Colonne 1} & \textbf{Colonne 2}  \\ \hline
+    1 & 2 \\ 
+    1 & 2 \\ 
+    1 & 2 \\ 
+    1 & 2 \\ \hline
+  \end{tabular}
+  \caption{Une petite table}
+  \label{tab:tabcol}
+\end{table}
+
+\begin{SaveVerbatim}{codefigure}
+  \begin{table*}[t]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Colonne 1} & \textbf{Colonne 2} & \textbf{Colonne 3} &
+      \textbf{Colonne 4} \\ \hline
+      1 & 2 & 3 & 4 \\ 
+      1 & 2 & 3 & 4 \\ 
+      1 & 2 & 3 & 4 \\ 
+      1 & 2 & 3 & 4 \\ \hline
+    \end{tabular}
+    \caption{Une grande table}
+    \label{tab:tab}
+  \end{table*}
+\end{SaveVerbatim}
+
+
+\begin{figure*}[t]
+  \centering
+  \UseVerbatim[frame=single]{codefigure}
+  \caption{Un exemple de code sur deux colonnes.}
+  \label{fig:code}
+\end{figure*}
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+
+
+\section{La bibliographie}
+\label{sec:la-bibliographie}
+
+Rien à dire. C'est comme par défaut. Par exemple~\cite{papier1} et~\cite{papier2}.
+
+Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla bla bla bla
+
+\section{Sans \LaTeX}
+\label{sec:sans-latex}
+
+Si vous n'utilisez pas \LaTeX, vous pouvez reprendre les dimensions
+données au début de ce document et essayer de trouver une fonte
+lisible. 
+
+\bibliography{cap2017}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
