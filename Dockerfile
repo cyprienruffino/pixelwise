@@ -29,4 +29,4 @@ RUN pip3 install pandas \
     scipy \
     sklearn \
     progressbar2 \
-    keras
+    keras==2.0.6
