@@ -75,8 +75,7 @@ def train(sgancfg,
         D_losses_history.append(D_loss)
 
         if generate_png or generate_hdf5 or use_tensorboard:
-            Znp = next(gen_data_provider)
-            data = G.predict(Znp)
+            data = G.predict(np.random.uniform(-1, 1, (1, 1, config.zx_sample, config.zx_sample)))
 
         if config.convdims == 2:
             if generate_png: utils.gen_png(data, samples_dir, run_name, epoch)
