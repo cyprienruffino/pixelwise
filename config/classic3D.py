@@ -89,7 +89,7 @@ class CustomConfig(Config):
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
-            "n_channel": self.nx,
+            "nx": self.nx,
         }
 
         self.gen_data_provider = data_io3D.gen_data_provider
@@ -97,5 +97,5 @@ class CustomConfig(Config):
             "zx": self.zx,
             "batch_size": self.batch_size,
             "convdims": self.convdims,
-            "n_channel": self.nz
+            "nz": self.nz
         }

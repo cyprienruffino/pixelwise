@@ -84,12 +84,12 @@ class CustomConfig(Config):
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
-            "n_channel": self.nx,
+            "nx": self.nx,
         }
 
         self.gen_data_provider = data_io2D.gen_data_provider
         self.gen_data_provider_args = {
             "zx": self.zx,
             "batch_size": self.batch_size,
-            "n_channel": self.nz,
+            "nz": self.nz,
         }

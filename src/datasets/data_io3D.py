@@ -81,16 +81,16 @@ def save_tensor(tensor, filename):
 
 
 def disc_data_provider(folder, zx, npx=64, batch_size=64, \
-                     filter=None, mirror=True, n_channel=1, convdims=3):
+                     filter=None, mirror=True, nx=1, convdims=3):
     folder = folder + "/"
-    generator = get_texture_iter(folder, npx, batch_size, filter, mirror, n_channel)
+    generator = get_texture_iter(folder, npx, batch_size, filter, mirror, nx)
     while True:
         yield next(generator)
 
 
-def gen_data_provider(_, batch_size, zx, n_channel=1, convdims=3):
+def gen_data_provider(_, batch_size, zx, nz=1, convdims=3):
     while True:
-        yield np.random.uniform(-1., 1., (batch_size, n_channel) + ((zx,) * convdims))
+        yield np.random.uniform(-1., 1., (batch_size, nz) + ((zx,) * convdims))
 
 
 if __name__=="__main__":
