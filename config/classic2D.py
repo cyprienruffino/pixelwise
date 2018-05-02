@@ -31,9 +31,10 @@ class CustomConfig(Config):
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
-        self.zx = 11  # Size of each spatial dimensions in Z
-        self.zx_sample = 19
-        self.npx = 352  # (zx * 2^ depth)
+        self.nx = 1  # Number of channels in Z
+        self.zx = 12  # Size of each spatial dimensions in Z
+        self.zx_sample = 12
+        self.npx = 384  # (zx * 2^ depth)
 
         # Networks
         self.generator = applications.classical_sgan_gen.create_network
@@ -41,7 +42,7 @@ class CustomConfig(Config):
             "filter_size": 5,
             "filters": [pow(2, i + 5) for i in range(4, 0, -1)] + [1],
             "convdims": 2,
-            "channels": 1,
+            "channels": self.nz,
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
             "epsilon": 1e-4,
@@ -52,7 +53,7 @@ class CustomConfig(Config):
         self.disc_args = {
             "filter_size": 9,
             "filters": [pow(2, i + 6) for i in range(4)] + [1],
-            "channels": 1,
+            "channels": self.nx,
             "convdims": 2,
             "clip_weights": False,
             "l2_fac": 1e-5,
@@ -88,7 +89,7 @@ class CustomConfig(Config):
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
-            "n_channel": self.nz,
+            "n_channel": self.nx,
         }
 
         self.gen_data_provider = data_io2D.gen_data_provider

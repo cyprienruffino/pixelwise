@@ -30,6 +30,7 @@ class CustomConfig(Config):
 
         # Data dimensions
         self.convdims = 3  # 2D or 3D convolutions
+        self.nx = 1  # Number of channels in X
         self.nz = 1  # Number of channels in Z
         self.zx = 3  # Size of each spatial dimensions in Z
         self.zx_sample = 4
@@ -40,7 +41,7 @@ class CustomConfig(Config):
         self.gen_args = {
             "filter_size": 5,
             "filters": [pow(2, i + 5) for i in range(4, 0, -1)] + [1],
-            "channels": 1,
+            "channels": self.nz,
             "convdims": 3,
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
@@ -52,7 +53,7 @@ class CustomConfig(Config):
         self.disc_args={
             "filter_size": 5,
             "filters": [pow(2, i + 6) for i in range(4)] + [1],
-            "channels": 1,
+            "channels": self.nx,
             "convdims": 3,
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
@@ -88,7 +89,7 @@ class CustomConfig(Config):
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
-            "n_channel": self.nz,
+            "n_channel": self.nx,
         }
 
         self.gen_data_provider = data_io3D.gen_data_provider

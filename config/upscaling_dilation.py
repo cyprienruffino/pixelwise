@@ -39,6 +39,7 @@ class CustomConfig(Config):
 
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
+        self.nx = 1  # Number of channels in X
         self.nz = 1  # Number of channels in Z
         self.zx = 12  # Size of each spatial dimensions in Z
         self.zx_sample = 12
@@ -53,7 +54,7 @@ class CustomConfig(Config):
         self.gen_args = {
             "filter_size": 5,
             "convdims": 2,
-            "channels": 1,
+            "channels": self.nz,
             "l2_fac": 1e-5,
             "upscaling_filters": [512, 256, 128, 64, 1],
             "strides": [2, 2, 2, 2, 2],
@@ -67,7 +68,7 @@ class CustomConfig(Config):
         self.disc_args = {
             "filter_size": 9,
             "filters": [64, 128, 256, 512, 1],
-            "channels": 1,
+            "channels": self.nx,
             "convdims": 2,
             "l2_fac": 1e-5,
             "strides": [2, 2, 2, 2, 2],
@@ -83,7 +84,7 @@ class CustomConfig(Config):
             "batch_size": self.batch_size,
             "filter": None,
             "mirror": True,
-            "n_channel": self.nz,
+            "n_channel": self.nx,
         }
 
         self.gen_data_provider = data_io2D.gen_data_provider
