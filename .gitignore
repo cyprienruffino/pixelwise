@@ -11,15 +11,14 @@ venv
 runs
 ti_2D
 ti_3D
+datasets
 
 *.hdf5
-*.sgancfg
-*.sgan
 *.txt
 *.pyc
+
 *.log
 *.aux
 *.synctex.gz
 
 notebook.py
-test.py
