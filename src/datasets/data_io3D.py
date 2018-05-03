@@ -93,5 +93,6 @@ def gen_data_provider(_, batch_size, zx, nz=1, convdims=3):
         yield np.random.uniform(-1., 1., (batch_size, nz) + ((zx,) * convdims))
 
 
+
 if __name__=="__main__":
     print("nothing here.")
