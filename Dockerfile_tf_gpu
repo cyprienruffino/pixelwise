@@ -1,14 +1,12 @@
-FROM debian
+FROM nvidia/cuda:8.0-cudnn6-devel
+FROM tensorflow/tensorflow:1.4.1-devel-gpu-py3
+
 MAINTAINER Cyprien Ruffino <ruffino.cyprien@gmail.com>
 
 RUN apt-get update && apt-get install -y \
-    cmake \
-    cpio \
-    gcc \
-    g++ \
-    gfortran \
-    wget \
     build-essential \
+    wget \
+    gfortran \
     kmod \
     git \
     wget \
@@ -31,13 +29,4 @@ RUN pip3 install pandas \
     scipy \
     sklearn \
     progressbar2 \
-    Theano \
     keras==2.0.6
-
-RUN mkdir /root/.keras && \
-    echo $'{ \n\
-    "image_data_format": "channels_last",\n\
-    "floatx": "float32",\n\
-    "backend": "theano",\n\
-    "epsilon": 1e-07\n\
-    }' > /root/.keras/keras.json

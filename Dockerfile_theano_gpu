@@ -13,9 +13,17 @@ RUN apt-get update && apt-get install -y \
     kmod \
     git \
     wget \
+    python\
     python3\
     liblapack-dev \
     libopenblas-dev \
+    python-dev \
+    python-pip \
+    python-nose \
+    python-numpy \
+    python-scipy \
+    python-h5py \
+    python-yaml \
     python3-dev \
     python3-pip \
     python3-nose \
@@ -25,21 +33,32 @@ RUN apt-get update && apt-get install -y \
     python3-h5py \
     python3-yaml
 
-# Install MKL
-RUN cd ~/GitHub/r-with-intel-mkl/
-RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-RUN apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-
-RUN sh -c 'echo deb https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list'
-RUN apt-get update && sudo apt-get install -y intel-mkl-64bit
-
-RUN pip3 install pandas \
+RUN pip3 install cython \
+    pandas \
     numpy \
-    gpuarray \
     h5py \
     Pillow \
     scipy \
     sklearn \
     progressbar2 \
     Theano \
-    keras==2.0.6 \
+    keras==2.0.6 
+
+# Installing libgpuarray
+RUN git clone https://github.com/Theano/libgpuarray.git && \
+    cd libgpuarray && \
+    mkdir Build && cd Build && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
+    make && make install && cd .. && \
+    python3 setup.py build && \
+    python3 setup.py install
+
+
+
+RUN mkdir /root/.keras && \
+    echo $'{ \n\
+        "image_data_format": "channels_last",\n\
+        "floatx": "float32",\n\
+        "backend": "theano",\n\
+        "epsilon": 1e-07\n\
+    }' > /root/.keras/keras.json
