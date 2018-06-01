@@ -1,6 +1,5 @@
 import numpy as np
 import progressbar
-from tensorflow import set_random_seed
 
 import utils
 
@@ -27,7 +26,6 @@ def train(sgancfg,
 
     # Seeding the random numbers generators
     np.random.seed(config.seed)
-    set_random_seed(config.seed)
 
     # Load or create the model
     D, G, DG, Adv = utils.load_models(config, D_path, G_path)
