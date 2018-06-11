@@ -67,5 +67,7 @@ RUN mkdir /root/.keras && \
 RUN echo '[global]\n\
         device=cuda\n\
         floatX=float32\n\
+        [cuda]\n\
+        root = /usr/local/cuda-8.0\n\
     ' > /root/.theanorc
 
