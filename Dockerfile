@@ -44,7 +44,7 @@ RUN pip3 install cython \
     Theano \
     keras==2.0.6 
 
-RUN pip install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
+RUN pip3 install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
 
 # Installing libgpuarray
 RUN git clone https://github.com/Theano/libgpuarray.git && \
@@ -64,9 +64,13 @@ RUN mkdir /root/.keras && \
         "epsilon": 1e-07\n\
     }' > /root/.keras/keras.json
 
-RUN echo '
-        [global]\n\
-        device=cuda\n\
-        floatX=float32
-    ' > /root/.theanorc
+RUN echo '[cuda]\n\
+root=/usr/local/cuda-8.0\n\
+[global]\n\
+device=cuda0\n\
+floatX=float32\n\
+' > /root/.theanorc
 
+RUN rm -rf /usr/lib/python3/dist-packages/numpy
+
+RUN pip3 install numpy

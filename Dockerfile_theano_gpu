@@ -42,6 +42,8 @@ RUN pip3 install cython \
     sklearn \
     progressbar2 \
     Theano \
+    joblib \
+    tqdm \
     keras==2.0.6 
 
 RUN pip3 install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
@@ -74,3 +76,16 @@ floatX=float32\n\
 RUN rm -rf /usr/lib/python3/dist-packages/numpy
 
 RUN pip3 install numpy
+
+# Patching jacobian function
+RUN echo '1915,1918c1915,1918\n\
+<     assert not updates, \\\n\
+<         ("Scan has returned a list of updates. This should not "\n\
+<          "happen! Report this to theano-users (also include the "\n\
+<          "script that generated the error)")\n\
+---
+>     # assert not updates, \\\n\
+>     #    ("Scan has returned a list of updates. This should not "\n\
+>     #     "happen! Report this to theano-users (also include the "\n\
+>     #     "script that generated the error)")' > gradient.patch && \
+    patch /usr/local/lib/python3.5/dist-packages/theano/gradient.py gradient.patch
