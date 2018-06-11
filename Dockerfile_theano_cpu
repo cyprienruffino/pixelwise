@@ -35,9 +35,11 @@ RUN pip3 install pandas \
     keras==2.0.6
 
 RUN mkdir /root/.keras && \
-    echo $'{ \n\
+    echo '{ \n\
     "image_data_format": "channels_last",\n\
     "floatx": "float32",\n\
     "backend": "theano",\n\
     "epsilon": 1e-07\n\
     }' > /root/.keras/keras.json
+
+RUN pip install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
