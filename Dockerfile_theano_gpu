@@ -83,7 +83,7 @@ RUN echo '1915,1918c1915,1918\n\
 <         ("Scan has returned a list of updates. This should not "\n\
 <          "happen! Report this to theano-users (also include the "\n\
 <          "script that generated the error)")\n\
----
+--- \n\
 >     # assert not updates, \\\n\
 >     #    ("Scan has returned a list of updates. This should not "\n\
 >     #     "happen! Report this to theano-users (also include the "\n\
