@@ -71,3 +71,6 @@ device=cuda0\n\
 floatX=float32\n\
 ' > /root/.theanorc
 
+RUN rm -rf /usr/lib/python3/dist-packages/numpy
+
+RUN pip3 install numpy
