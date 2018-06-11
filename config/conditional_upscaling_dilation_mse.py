@@ -1,7 +1,7 @@
 import hashlib
 
 import applications.conditional_disc
-import applications.conditional_dilation_only_gen
+import applications.conditional_upscaling_dilation_gen_mse
 from config import Config
 from datasets import constrained_data_io2D
 from losses import *
@@ -10,7 +10,6 @@ from runtime.optimizers import Adam
 
 
 class CustomConfig(Config):
-
 
     def __init__(self, name):
         super().__init__(name)
@@ -22,42 +21,46 @@ class CustomConfig(Config):
 
         # Training settings
         self.batch_size = 2
-        self.epoch_iters = 150
-        self.epochs = 50
+        self.epoch_iters = 100
+        self.epochs = 40
         self.k = 1  # Number of D updates vs G updates
 
         # Optimizers
         self.disc_optimizer = Adam
         self.disc_optimizer_args = {
-            "lr": 0.0001,
+            "lr": 0.0005,
             "beta_1": 0.5
         }
         self.gen_optimizer = Adam
         self.gen_optimizer_args = {
-            "lr": 0.0001,
+            "lr": 0.0005,
             "beta_1": 0.5
         }
 
         # Data dimensions
         self.convdims = 2  # 2D or 3D convolutions
         self.nz = 1  # Number of channels in Z
-        self.zx = 384  # Size of each spatial dimensions in Z
-        self.zx_sample = 384
+        self.zx = 12  # Size of each spatial dimensions in Z
+        self.zx_sample = 12
         self.npx = 384  # (zx * 2^ depth)
+
+        self.lmbda = 0.1
 
         # Network setup
         self.loss_disc_fake = gan_disc_fake
         self.loss_disc_true = gan_disc_true
-        self.loss_gen = gan_gen
+        self.loss_gen = sparse_mse_gen(self.lmbda)
 
-        self.generator = applications.conditional_dilation_only_gen.create_network
+        self.generator = applications.conditional_upscaling_dilation_gen_mse.create_network
         self.gen_args = {
             "filter_size": 5,
             "convdims": 2,
             "channels": 1,
             "l2_fac": 1e-5,
-            "filters": [64, 128, 128, 256, 256, 512, 512, 1],
-            "dilations": [1, 1, 2, 2, 3, 3, 1],
+            "upscaling_filters": [512, 256, 128, 64, 1],
+            "strides": [2, 2, 2, 2, 2],
+            "dilations_filters": [256, 512, 1],
+            "dilations": [5, 7, 9],
             "epsilon": 1e-4,
             "init": RandomNormal(stddev=0.02)
         }
@@ -80,7 +83,7 @@ class CustomConfig(Config):
             "zx": self.zx,
             'npx': self.npx,
             "batch_size": self.batch_size,
-            "constraints_ratio": 0.1,
+            "constraints_ratio": 0.001,
             "filter": None,
             "mirror": True,
             "n_channel": self.nz,
@@ -94,5 +97,5 @@ class CustomConfig(Config):
             "filter": None,
             "mirror": True,
             "n_channel": self.nz,
-            "constraints_ratio": 0.1
+            "constraints_ratio": 0.001
         }

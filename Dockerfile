@@ -44,6 +44,8 @@ RUN pip3 install cython \
     Theano \
     keras==2.0.6 
 
+RUN pip install --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip
+
 # Installing libgpuarray
 RUN git clone https://github.com/Theano/libgpuarray.git && \
     cd libgpuarray && \
@@ -54,11 +56,17 @@ RUN git clone https://github.com/Theano/libgpuarray.git && \
     python3 setup.py install
 
 
-
 RUN mkdir /root/.keras && \
-    echo $'{ \n\
+    echo '{ \n\
         "image_data_format": "channels_last",\n\
         "floatx": "float32",\n\
         "backend": "theano",\n\
         "epsilon": 1e-07\n\
     }' > /root/.keras/keras.json
+
+RUN echo '
+        [global]\n\
+        device=cuda\n\
+        floatX=float32
+    ' > /root/.theanorc
+

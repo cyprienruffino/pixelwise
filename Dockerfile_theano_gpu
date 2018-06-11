@@ -64,9 +64,8 @@ RUN mkdir /root/.keras && \
         "epsilon": 1e-07\n\
     }' > /root/.keras/keras.json
 
-RUN echo '
-        [global]\n\
+RUN echo '[global]\n\
         device=cuda\n\
-        floatX=float32
+        floatX=float32\n\
     ' > /root/.theanorc
 
