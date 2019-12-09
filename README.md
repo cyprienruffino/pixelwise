@@ -1,4 +1,4 @@
-# Code for "Pixel-wise Conditioning of Generative Adversarial Networks", ESANN2019
+# Code for "Pixel-wise Conditioning of Generative Adversarial Networks", ESANN2019 and Neurocomputing 2020
 
 ## Usage
 
