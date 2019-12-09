@@ -1,5 +1,7 @@
 __pycache__
 .mypy_cache
+.ipynb_checkpoints
+.vscode
 .idea
 .ropeproject
 checkpoints
@@ -12,6 +14,9 @@ runs
 ti_2D
 ti_3D
 datasets
+data
+oldruns
+figs
 
 *.hdf5
 *.txt
