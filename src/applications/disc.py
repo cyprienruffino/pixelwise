@@ -29,22 +29,14 @@ def create_network(Xt, Ct,
         layer = kl.LeakyReLU()(layer)
 
         for l in range(1, len(filters) - 1):
-<<<<<<< HEAD
-            conv = kl.Conv2D(
-=======
             layer = kl.Conv2D(
->>>>>>> keras
                 filters=filters[l],
                 kernel_size=filter_size,
                 padding="same",
                 strides=strides[l],
                 use_bias=False,
                 kernel_regularizer=kr.l2())(layer)
-<<<<<<< HEAD
-            layer = kl.LeakyReLU()(conv)
-=======
             layer = kl.LeakyReLU()(layer)
->>>>>>> keras
             layer = kl.BatchNormalization()(layer)
 
         D_out = kl.Conv2D(

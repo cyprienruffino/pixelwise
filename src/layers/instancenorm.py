@@ -139,8 +139,5 @@ class InstanceNormalization(Layer):
             'gamma_constraint': constraints.serialize(self.gamma_constraint)
         }
         base_config = super(InstanceNormalization, self).get_config()
-<<<<<<< HEAD
         return dict(list(base_config.items()) + list(config.items()))
-=======
-        return dict(list(base_config.items()) + list(config.items()))
->>>>>>> keras
+

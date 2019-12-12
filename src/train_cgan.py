@@ -41,10 +41,6 @@ def run(cfg, dataset_path, logs_dir, checkpoints_dir, checkpoints=True):
         # Building models
         Z = tf.placeholder(tf.float32, (None, cfg.zx, cfg.zx, cfg.nz,), name="Z")
         X = tf.placeholder(tf.float32, (None, cfg.npx, cfg.npx, cfg.channels,), name="X")
-<<<<<<< HEAD
-=======
-        
->>>>>>> keras
         C = tf.placeholder(tf.float32, (None, cfg.npx, cfg.npx, cfg.channels,), name="C")
         Cf = tf.placeholder(tf.float32, (None, cfg.npx, cfg.npx, cfg.channels,), name="Cf")
 
